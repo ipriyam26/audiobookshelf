@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       builder: (BuildContext context, Widget? child) {
         return GetMaterialApp(
           theme: theme,
-          home:  LoginScreen(),
+          home: LoginScreen(),
         );
       },
     );
