@@ -1,4 +1,6 @@
+import 'package:audiobookshelf/Model/login_response/login_response.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,10 +31,28 @@ class LoginController extends GetxController {
     }
 
     isLoading.value = false;
-    // make a get request and if theme is an error show using get snackbar
   }
 
   Future<void> login() async {
-    // make a post request and if theme is an error show using get snackbar
+    isLoading.value = true;
+    ApiService apiService = ApiService(
+        serverUrl: serverController.text, theme: Theme.of(Get.context!));
+    // try {
+      final response = await apiService.post('login', {
+        "username": usernameController.text,
+        "password": passwordController.text
+      });
+      print(response);
+      final loginResponse = LoginResponse.fromMap(response);
+      if (kDebugMode) {
+        print(loginResponse.user!.token);
+      }
+      if (loginResponse.user!.token != null) {
+        Get.snackbar("Success", "Login Successful");
+      }
+    // } catch (e) {
+    //   Get.snackbar("Error", "Login Failed");
+    // }
+    isLoading.value = false;
   }
 }

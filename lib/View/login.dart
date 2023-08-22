@@ -181,7 +181,9 @@ class AddUser extends StatelessWidget {
                   children: [
                     TextOutlineButton(
                         text: "Submit",
-                        onPressed: () {},
+                        onPressed: () {
+                          controller.login();
+                        },
                         isDisabled: controller.isLoading.value)
                   ],
                 )
