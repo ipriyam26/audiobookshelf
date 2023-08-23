@@ -1,6 +1,7 @@
 import 'package:audiobookshelf/Controller/login_controller.dart';
 import 'package:audiobookshelf/Utils/button.dart';
 import 'package:audiobookshelf/Utils/textfield.dart';
+import 'package:audiobookshelf/View/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -24,7 +25,6 @@ class LoginScreen extends StatelessWidget {
           // alignment: Alignment.,
           child: Obx(() => Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                // mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 4.w),
@@ -112,6 +112,7 @@ class AddServer extends StatelessWidget {
                         onPressed: () async {
                           await controller.pingServer();
                           controller.toggleSubmit();
+                          // move to home screen
                         },
                         isDisabled: controller.isLoading.value,
                       ),
@@ -181,8 +182,9 @@ class AddUser extends StatelessWidget {
                   children: [
                     TextOutlineButton(
                         text: "Submit",
-                        onPressed: () {
-                          controller.login();
+                        onPressed: () async {
+                          await controller.login();
+                          Get.offAll(HomeScreen());
                         },
                         isDisabled: controller.isLoading.value)
                   ],

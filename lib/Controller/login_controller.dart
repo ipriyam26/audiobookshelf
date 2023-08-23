@@ -3,6 +3,7 @@ import 'package:audiobookshelf/Model/login_response/login_response.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   RxBool addingUser = false.obs;
@@ -33,23 +34,36 @@ class LoginController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<void> login() async {
+  Future<bool> login() async {
     isLoading.value = true;
+    final username = usernameController.text;
+    final password = passwordController.text;
+
     ApiService apiService = ApiService();
     try {
       final response = await apiService.post('login', {
-        "username": usernameController.text,
-        "password": passwordController.text
+        "username": username,
+        "password": password,
       });
       final loginResponse = LoginResponse.fromMap(response);
       if (loginResponse.user!.token != null) {
         ApiService().setAuthToken(loginResponse.user!.token!);
         Get.find<UserController>().setUser(loginResponse.user!);
         Get.snackbar("Success", "Login Successful");
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("server", serverController.text);
+        await prefs.setString("username", usernameController.text);
+        await prefs.setString("password", passwordController.text);
+        await prefs.setString("token", loginResponse.user!.token!);
+      } else {
+        throw Exception("Login Failed");
       }
     } catch (e) {
       Get.snackbar("Error", "Login Failed");
+      isLoading.value = false;
+      return false;
     }
     isLoading.value = false;
+    return true;
   }
 }

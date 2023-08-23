@@ -70,20 +70,18 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           centerTitle: false,
-          title: Obx(
-            () => Container(
-              width: 180.w,
-              margin: EdgeInsets.only(bottom: 8.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  DropDownList(homeController: homeController),
-                  Icon(
-                    Icons.cloud_done_outlined,
-                    color: Get.theme.colorScheme.primary,
-                  ),
-                ],
-              ),
+          title: Container(
+            width: 180.w,
+            margin: EdgeInsets.only(bottom: 8.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                DropDownList(homeController: homeController),
+                Icon(
+                  Icons.cloud_done_outlined,
+                  color: Get.theme.colorScheme.primary,
+                ),
+              ],
             ),
           ),
           actions: searchNDrawer,
