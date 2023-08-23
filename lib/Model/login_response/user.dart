@@ -91,4 +91,23 @@ class User {
   ///
   /// Converts [User] to a JSON string.
   String toJson() => json.encode(toMap());
+
+  factory User.empty() {
+    return User(
+      id: "",
+      username: "",
+      type: "",
+      token: "",
+      mediaProgress: [],
+      seriesHideFromContinueListening: [],
+      bookmarks: [],
+      isActive: false,
+      isLocked: false,
+      lastSeen: 0,
+      createdAt: 0,
+      permissions: Permissions.empty(),
+      librariesAccessible: [],
+      itemTagsAccessible: [],
+    );
+  }
 }

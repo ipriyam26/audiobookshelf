@@ -55,4 +55,16 @@ class Permissions {
   ///
   /// Converts [Permissions] to a JSON string.
   String toJson() => json.encode(toMap());
+
+  factory Permissions.empty() {
+    return Permissions(
+      download: false,
+      update: false,
+      delete: false,
+      upload: false,
+      accessAllLibraries: false,
+      accessAllTags: false,
+      accessExplicitContent: false,
+    );
+  }
 }

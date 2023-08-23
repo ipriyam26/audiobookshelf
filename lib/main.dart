@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/View/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:json_theme/json_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ThemeData theme = await getTheme();
+  Get.put(UserController());
   runApp(MyApp(theme: theme));
 }
 

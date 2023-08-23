@@ -1,3 +1,4 @@
+import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/login_response/login_response.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
 import 'package:flutter/foundation.dart';
@@ -18,41 +19,38 @@ class LoginController extends GetxController {
 
   Future<void> pingServer() async {
     isLoading.value = true;
-    ApiService apiService = ApiService(
-        serverUrl: serverController.text, theme: Theme.of(Get.context!));
-    try {
-      final response = await apiService.get('ping');
-      if (!response["success"]) {
-        // Get.snackbar("Success", "Server is up and running");
-        Get.snackbar("Error", "Server is not running");
-      }
-    } catch (e) {
+    ApiService apiService = ApiService.initialize(
+        serverUrl: serverController.text, theme: Get.theme);
+    // try {
+    final response = await apiService.get('ping');
+    if (!response["success"]) {
+      // Get.snackbar("Success", "Server is up and running");
       Get.snackbar("Error", "Server is not running");
     }
+    // } catch (e) {
+    //   Get.snackbar("Error", "Server is not running");
+    // }
 
     isLoading.value = false;
   }
 
   Future<void> login() async {
     isLoading.value = true;
-    ApiService apiService = ApiService(
-        serverUrl: serverController.text, theme: Theme.of(Get.context!));
-    // try {
+    ApiService apiService = ApiService();
+    try {
       final response = await apiService.post('login', {
         "username": usernameController.text,
         "password": passwordController.text
       });
-      print(response);
       final loginResponse = LoginResponse.fromMap(response);
-      if (kDebugMode) {
-        print(loginResponse.user!.token);
-      }
       if (loginResponse.user!.token != null) {
+        ApiService().setAuthToken(loginResponse.user!.token!);
+        Get.find<UserController>().setUser(loginResponse.user!);
         Get.snackbar("Success", "Login Successful");
       }
-    // } catch (e) {
-    //   Get.snackbar("Error", "Login Failed");
-    // }
+    } catch (e) {
+      Get.snackbar("Error", "Login Failed");
+    }
     isLoading.value = false;
   }
 }
