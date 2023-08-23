@@ -1,7 +1,6 @@
 import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/login_response/login_response.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,15 +20,15 @@ class LoginController extends GetxController {
     isLoading.value = true;
     ApiService apiService = ApiService.initialize(
         serverUrl: serverController.text, theme: Get.theme);
-    // try {
-    final response = await apiService.get('ping');
-    if (!response["success"]) {
-      // Get.snackbar("Success", "Server is up and running");
-      Get.snackbar("Error", "Server is not running");
+    try {
+      final response = await apiService.get('ping');
+      if (!response["success"]) {
+        // Get.snackbar("Success", "Server is up and running");
+        Get.snackbar("Error", "Not able to ping server");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Internal Server Error");
     }
-    // } catch (e) {
-    //   Get.snackbar("Error", "Server is not running");
-    // }
 
     isLoading.value = false;
   }

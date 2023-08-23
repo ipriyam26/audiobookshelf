@@ -1,10 +1,7 @@
-import 'dart:convert';
 
 import 'package:audiobookshelf/Utils/snakbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:json_theme/json_theme.dart';
 
 class ApiService {
   static final ApiService _singleton = ApiService._internal();

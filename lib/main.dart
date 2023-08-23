@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:audiobookshelf/Controller/user_controller.dart';
+import 'package:audiobookshelf/View/home.dart';
 import 'package:audiobookshelf/View/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
       builder: (BuildContext context, Widget? child) {
         return GetMaterialApp(
           theme: theme,
-          home: LoginScreen(),
+          home: HomeScreen(),
         );
       },
     );
