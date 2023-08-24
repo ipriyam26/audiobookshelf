@@ -39,6 +39,14 @@ class LoginResponse {
         'serverSettings': serverSettings?.toMap(),
         'Source': source,
       };
+  factory LoginResponse.empty() {
+    return LoginResponse(
+      user: User.empty(),
+      userDefaultLibraryId: "",
+      serverSettings: ServerSettings.empty(),
+      source: "",
+    );
+  }
 
   /// `dart:convert`
   ///

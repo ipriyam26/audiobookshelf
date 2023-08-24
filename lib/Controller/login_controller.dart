@@ -46,9 +46,12 @@ class LoginController extends GetxController {
         "password": password,
       });
       final loginResponse = LoginResponse.fromMap(response);
+      final userController = Get.find<UserController>();
       if (loginResponse.user!.token != null) {
         ApiService().setAuthToken(loginResponse.user!.token!);
-        Get.find<UserController>().setUser(loginResponse.user!);
+        await userController.setUser(loginResponse.user!);
+        await userController.setServer(serverController.text);
+        userController.setLoginResponse(loginResponse);
         Get.snackbar("Success", "Login Successful");
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("server", serverController.text);

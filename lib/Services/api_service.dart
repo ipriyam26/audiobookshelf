@@ -1,4 +1,3 @@
-
 import 'package:audiobookshelf/Utils/snakbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -49,13 +48,18 @@ class ApiService {
       Response response;
       final options = Options(
         headers: isAuth
-            ? {'Authorization': 'Bearer $authToken'}
+            ? {
+                'Authorization': 'Bearer $authToken',
+                'Content-Type': 'application/json'
+              }
             : null, // Add the header if isAuth is true
       );
 
       if (method == 'GET') {
         response = await dio.get('$serverUrl/$path', options: options);
       } else if (method == 'POST') {
+        // add Content-Type as application/json to the header
+
         response =
             await dio.post('$serverUrl/$path', data: data, options: options);
       } else {

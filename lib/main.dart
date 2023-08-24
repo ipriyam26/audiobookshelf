@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:audiobookshelf/Controller/auth_controller.dart';
 import 'package:audiobookshelf/Controller/user_controller.dart';
-import 'package:audiobookshelf/View/home.dart';
+import 'package:audiobookshelf/View/home/home.dart';
 import 'package:audiobookshelf/View/login.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,7 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
+import 'package:audiobookshelf/Model/library_response/library.dart';
+import 'package:audiobookshelf/View/home/tabs/home.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -76,7 +79,7 @@ class HomeScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DropDownList(homeController: homeController),
+                DropDownList(),
                 Icon(
                   Icons.cloud_done_outlined,
                   color: Get.theme.colorScheme.primary,
@@ -86,13 +89,13 @@ class HomeScreen extends StatelessWidget {
           ),
           actions: searchNDrawer,
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            Icon(Icons.flight, size: 350),
-            Icon(Icons.directions_transit, size: 350),
-            Icon(Icons.book, size: 350),
-            Icon(Icons.shelves, size: 350),
-            Icon(Icons.directions_car, size: 350),
+            HomeTab(),
+            const Icon(Icons.directions_transit, size: 350),
+            const Icon(Icons.book, size: 350),
+            const Icon(Icons.shelves, size: 350),
+            const Icon(Icons.directions_car, size: 350),
           ],
         ),
       ),
@@ -101,54 +104,53 @@ class HomeScreen extends StatelessWidget {
 }
 
 class DropDownList extends StatelessWidget {
-  const DropDownList({
+  DropDownList({
     super.key,
-    required this.homeController,
   });
 
-  final HomeController homeController;
+  final HomeController homeController = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // color: Get.theme.colorScheme.background,
-      padding: EdgeInsets.symmetric(horizontal: 4.w),
-      decoration: BoxDecoration(
-          color: Get.theme.colorScheme.outlineVariant,
-          borderRadius: BorderRadius.circular(4.r)),
-      child: DropdownButton(
-        underline: Container(),
+    return Obx(() => Container(
+          // color: Get.theme.colorScheme.background,
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          decoration: BoxDecoration(
+              color: Get.theme.colorScheme.outlineVariant,
+              borderRadius: BorderRadius.circular(4.r)),
+          child: DropdownButton<Library>(
+            underline: Container(),
 
-        value: homeController.dropdownvalue.value,
-        // Down Arrow Icon
-        icon: Container(),
-        // Array list of items
-        items: homeController.items.map((String item) {
-          return DropdownMenuItem(
-            value: item,
-            child: SizedBox(
-                child: Row(
-              children: [
-                const Icon(Icons.language),
-                SizedBox(width: 8.w),
-                SizedBox(
-                  width: 100.w, // Set your maximum width here
-                  child: Text(
-                    item,
-                    style: Get.theme.textTheme.headlineSmall,
-                    overflow: TextOverflow
-                        .ellipsis, // Add this line to handle overflow
-                  ),
-                ),
-              ],
-            )),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          homeController.dropdownvalue.value = newValue!;
-        },
-      ),
-    );
+            value: homeController.dropdownvalue.value,
+            // Down Arrow Icon
+            icon: Container(),
+            // Array list of items
+            items: homeController.items.map((Library item) {
+              return DropdownMenuItem(
+                value: item,
+                child: SizedBox(
+                    child: Row(
+                  children: [
+                    const Icon(Icons.language),
+                    SizedBox(width: 8.w),
+                    SizedBox(
+                      width: 100.w, // Set your maximum width here
+                      child: Text(
+                        item.name!,
+                        style: Get.theme.textTheme.titleLarge,
+                        overflow: TextOverflow
+                            .ellipsis, // Add this line to handle overflow
+                      ),
+                    ),
+                  ],
+                )),
+              );
+            }).toList(),
+            onChanged: (Library? newValue) {
+              homeController.dropdownvalue.value = newValue!;
+            },
+          ),
+        ));
   }
 }
 

@@ -432,7 +432,7 @@
         "decoration": "none",
         "fontFamily": ".AppleSystemUIFont",
         "fontSize": 16,
-        "fontWeight": "w400",
+        "fontWeight": "w600",
         "inherit": false,
         "letterSpacing": 0.15,
         "textBaseline": "alphabetic"

@@ -1,6 +1,5 @@
 import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/login_response/login_response.dart';
-import 'package:audiobookshelf/Model/login_response/user.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,9 +22,12 @@ class AuthController extends GetxController {
         "password": password,
       });
       final loginResponse = LoginResponse.fromMap(response);
+      final userController = Get.find<UserController>();
+      userController.setServer(server);
       if (loginResponse.user!.token != null) {
         ApiService().setAuthToken(loginResponse.user!.token!);
-        Get.find<UserController>().setUser(loginResponse.user!);
+        await userController.setUser(loginResponse.user!);
+        userController.setLoginResponse(loginResponse);
         return true;
       } else {
         throw Exception("Login Failed");

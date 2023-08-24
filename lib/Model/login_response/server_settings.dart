@@ -155,6 +155,42 @@ class ServerSettings {
   factory ServerSettings.fromJson(String data) {
     return ServerSettings.fromMap(json.decode(data) as Map<String, dynamic>);
   }
+  factory ServerSettings.empty() {
+    return ServerSettings(
+      id: "",
+      scannerFindCovers: false,
+      scannerCoverProvider: "",
+      scannerParseSubtitle: false,
+      scannerPreferAudioMetadata: false,
+      scannerPreferOpfMetadata: false,
+      scannerPreferMatchedMetadata: false,
+      scannerDisableWatcher: false,
+      scannerPreferOverdriveMediaMarker: false,
+      scannerUseSingleThreadedProber: false,
+      scannerMaxThreads: 0,
+      scannerUseTone: false,
+      storeCoverWithItem: false,
+      storeMetadataWithItem: false,
+      metadataFileFormat: "",
+      rateLimitLoginRequests: 0,
+      rateLimitLoginWindow: 0,
+      backupSchedule: "",
+      backupsToKeep: 0,
+      maxBackupSize: 0,
+      backupMetadataCovers: false,
+      loggerDailyLogsToKeep: 0,
+      loggerScannerLogsToKeep: 0,
+      homeBookshelfView: 0,
+      bookshelfView: 0,
+      sortingIgnorePrefix: false,
+      sortingPrefixes: [],
+      chromecastEnabled: false,
+      dateFormat: "",
+      language: "",
+      logLevel: 0,
+      version: "",
+    );
+  }
 
   /// `dart:convert`
   ///
