@@ -43,7 +43,9 @@ class ApiService {
   // ApiService({required this.serverUrl, required this.theme, this.authToken});
 
   Future<Map<String, dynamic>> _request(String method, String path,
-      {Map<String, dynamic>? data, bool isAuth = false}) async {
+      {Map<String, dynamic>? data,
+      bool isAuth = false,
+      Map<String, dynamic>? queryParameters}) async {
     try {
       Response response;
       final options = Options(
@@ -56,12 +58,15 @@ class ApiService {
       );
 
       if (method == 'GET') {
-        response = await dio.get('$serverUrl/$path', options: options);
+        response = await dio.get('$serverUrl/$path',
+            options: options, queryParameters: queryParameters ?? {});
       } else if (method == 'POST') {
         // add Content-Type as application/json to the header
 
-        response =
-            await dio.post('$serverUrl/$path', data: data, options: options);
+        response = await dio.post('$serverUrl/$path',
+            data: data,
+            options: options,
+            queryParameters: queryParameters ?? {});
       } else {
         throw Exception('Unsupported method: $method');
       }
@@ -88,19 +93,23 @@ class ApiService {
     return await _request('POST', path, data: data);
   }
 
-  Future<Map<String, dynamic>> authenticatedGet(String path) async {
+  Future<Map<String, dynamic>> authenticatedGet(String path,
+      {Map<String, dynamic>? queryParameters}) async {
     if (authToken == null) {
       throw Exception('No token found!, Use setAuthToken() to set the token');
     }
-    return await _request('GET', path, isAuth: true);
+    return await _request('GET', path,
+        isAuth: true, queryParameters: queryParameters);
   }
 
   Future<Map<String, dynamic>> authenticatedPost(
-      String path, Map<String, dynamic> data) async {
+      String path, Map<String, dynamic> data,
+      {Map<String, dynamic>? queryParameters}) async {
     if (authToken == null) {
       throw Exception('No token found!, Use setAuthToken() to set the token');
     }
-    return await _request('POST', path, data: data, isAuth: true);
+    return await _request('POST', path,
+        data: data, isAuth: true, queryParameters: queryParameters);
   }
 
   // make a get request and if theme is an error show using get snackbar

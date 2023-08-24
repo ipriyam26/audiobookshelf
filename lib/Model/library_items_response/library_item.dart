@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:audiobookshelf/Model/login_response/media_progress.dart';
 import 'package:collection/collection.dart';
 
 import 'library_file.dart';
 import 'media.dart';
 
 class LibraryItem {
+  MediaProgress? mediaProgress;
   String? id;
   String? ino;
   String? libraryId;
@@ -116,6 +118,11 @@ class LibraryItem {
   ///
   /// Converts [LibraryItem] to a JSON string.
   String toJson() => json.encode(toMap());
+
+// add mediaProgress to LibraryItem
+  setMediaProgress(MediaProgress mediaProgress) {
+    this.mediaProgress = mediaProgress;
+  }
 
   @override
   bool operator ==(Object other) {

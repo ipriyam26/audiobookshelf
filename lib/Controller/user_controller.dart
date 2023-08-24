@@ -7,7 +7,6 @@ import 'package:audiobookshelf/Model/login_response/user.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
 import 'package:get/get.dart';
 
-
 class UserController extends GetxController {
   Rx<User> currentUser = Rx<User>(User.empty());
   RxString server = "".obs;

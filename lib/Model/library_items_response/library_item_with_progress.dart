@@ -2,6 +2,7 @@ import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Model/login_response/media_progress.dart';
 
 class LibraryItemWithProgress extends LibraryItem {
+  @override
   final MediaProgress mediaProgress;
 
   LibraryItemWithProgress({

@@ -1,29 +1,33 @@
 import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
-import 'package:audiobookshelf/Model/library_items_response/library_item_with_progress.dart';
+import 'package:audiobookshelf/Model/library_items_response/library_items_result.dart';
 import 'package:audiobookshelf/Model/library_response/library.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   RxList<Library> items = <Library>[].obs;
-  // select first item
   final userController = Get.find<UserController>();
   late Rx<Library> dropdownvalue;
-  // late RxString coverUrl;
-  RxList<LibraryItemWithProgress> mediaProgressionItems =
-      <LibraryItemWithProgress>[].obs;
-  HomeController() {
-    dropdownvalue = Rx<Library>(userController.libraries[0]);
-    items.value = userController.libraries;
+  RxList<LibraryItem> mediaProgressionItems = <LibraryItem>[].obs;
+  RxList<LibraryItem> recentlyAddedItems = <LibraryItem>[].obs;
+  @override
+  onReady() async {
+    super.onReady();
+    recentlyAddedItems.value = await getRecentlyAddedLibraryItems() ?? [];
     getSortedMediaProgressItem().then((result) {
       if (result != null) {
         mediaProgressionItems.value = result;
       }
     });
-    // coverUrl =
 
-    //         .obs;
+    update();
+  }
+
+  HomeController() {
+    dropdownvalue = Rx<Library>(userController.libraries[0]);
+    items.value = userController.libraries;
+
     update();
   }
 
@@ -31,20 +35,39 @@ class HomeController extends GetxController {
     return "${userController.server.value}/api/items/$libraryItemId/cover?token=${userController.currentUser.value.token}";
   }
 
-  String getAuthor(int idx) {
+  String getAuthor(LibraryItem item) {
     try {
-      return mediaProgressionItems[idx].media!.metadata!.authors![0].name!;
+      return item.media!.metadata!.authors![0].name!;
     } catch (e) {
       return "Unknown";
     }
   }
 
-  Future<List<LibraryItemWithProgress>?> getSortedMediaProgressItem() async {
+  Future<List<LibraryItem>?> getRecentlyAddedLibraryItems() async {
+    String libraryId = dropdownvalue.value.id!;
+    ApiService apiService = ApiService();
+    final query = {
+      'limit': 10,
+      'sort': 'addedAt',
+      'minified': 1,
+      'desc': 1,
+    };
+    final response = await apiService.authenticatedGet(
+        '/api/libraries/$libraryId/items',
+        queryParameters: query);
+    final libraryItems = LibraryItemsResult.fromMap(response);
+    // for (var i = 0; i < libraryItems.results!.length; i++) {
+    //   print(libraryItems.results![i].media!.metadata!.title!);
+    // }
+    return libraryItems.results;
+  }
+
+  Future<List<LibraryItem>?> getSortedMediaProgressItem() async {
     final mediaProgressionItems = await getMediaProgressItems();
     if (mediaProgressionItems != null) {
       mediaProgressionItems.sort((a, b) {
-        final aDate = a.mediaProgress.lastUpdate ?? 0;
-        final bDate = b.mediaProgress.lastUpdate ?? 0;
+        final aDate = a.mediaProgress!.lastUpdate ?? 0;
+        final bDate = b.mediaProgress!.lastUpdate ?? 0;
         return bDate.compareTo(aDate);
       });
       return mediaProgressionItems;
@@ -52,26 +75,21 @@ class HomeController extends GetxController {
     return [];
   }
 
-  Future<List<LibraryItemWithProgress>?> getMediaProgressItems() async {
+  Future<List<LibraryItem>?> getMediaProgressItems() async {
     final mediaProgressList = userController.currentUser.value.mediaProgress!;
     final mediaProgressMap = {
       for (var e in mediaProgressList) e.libraryItemId!: e
     };
 
-    ApiService apiService = ApiService();
     final mediaProgressLibIds = mediaProgressMap.keys.toList();
     if (mediaProgressLibIds.isNotEmpty) {
       List<LibraryItem>? libItems =
           await userController.getLibraryItemBatch(mediaProgressLibIds);
       if (libItems != null) {
-        return libItems.map((libItem) {
-          // print(apiService.authenticatedGet("/api/items/${libItem.id}/cover"));
-          // return `${rootState.routerBasePath}/api/items/${libraryItemId}/cover?token=${userToken}${raw ? '&raw=1' : ''}${timestamp ? `&ts=${timestamp}` : ''}`
-          return LibraryItemWithProgress(
-            libraryItem: libItem,
-            mediaProgress: mediaProgressMap[libItem.id]!,
-          );
-        }).toList();
+        for (var element in libItems) {
+          element.mediaProgress = mediaProgressMap[element.id!];
+        }
+        return libItems;
       }
     }
     return Future.value([]);
