@@ -15,6 +15,7 @@ class UserController extends GetxController {
   Future<void> setUser(User user) async {
     currentUser.value = user;
     // print("User progressions: ${user.mediaProgress}");
+    // print(user.mediaProgress);
     await getAllLibraries();
   }
 
@@ -41,7 +42,6 @@ class UserController extends GetxController {
       final libraryResponse = LibraryResponse.fromMap(response);
       if (libraryResponse.libraries != null) {
         libraries = libraryResponse.libraries!;
-        // print("Libraries: ${libraries.map((e) => e.name)}");
       }
     } catch (e) {
       Get.snackbar("Error", "Error getting libraries");

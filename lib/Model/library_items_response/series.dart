@@ -2,17 +2,17 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 
-class Series {
+class SeriesMini {
   String? id;
   String? name;
   String? sequence;
 
-  Series({this.id, this.name, this.sequence});
+  SeriesMini({this.id, this.name, this.sequence});
 
   @override
   String toString() => 'Series(id: $id, name: $name, sequence: $sequence)';
 
-  factory Series.fromMap(Map<String, dynamic> data) => Series(
+  factory SeriesMini.fromMap(Map<String, dynamic> data) => SeriesMini(
         id: data['id'] as String?,
         name: data['name'] as String?,
         sequence: data['sequence'] as String?,
@@ -26,20 +26,20 @@ class Series {
 
   /// `dart:convert`
   ///
-  /// Parses the string and returns the resulting Json object as [Series].
-  factory Series.fromJson(String data) {
-    return Series.fromMap(json.decode(data) as Map<String, dynamic>);
+  /// Parses the string and returns the resulting Json object as [SeriesMini].
+  factory SeriesMini.fromJson(String data) {
+    return SeriesMini.fromMap(json.decode(data) as Map<String, dynamic>);
   }
 
   /// `dart:convert`
   ///
-  /// Converts [Series] to a JSON string.
+  /// Converts [SeriesMini] to a JSON string.
   String toJson() => json.encode(toMap());
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    if (other is! Series) return false;
+    if (other is! SeriesMini) return false;
     final mapEquals = const DeepCollectionEquality().equals;
     return mapEquals(other.toMap(), toMap());
   }

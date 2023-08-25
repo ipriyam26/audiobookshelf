@@ -16,6 +16,9 @@ class ContinueListening extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(
+          height: 20.h,
+        ),
         Container(
           margin: EdgeInsets.only(left: 12.w, bottom: 12.h),
           child: Text("Continue Listening",

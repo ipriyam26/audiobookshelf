@@ -2,30 +2,35 @@ import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_items_result.dart';
 import 'package:audiobookshelf/Model/library_response/library.dart';
+import 'package:audiobookshelf/Model/recent_series_response/recent_series_response.dart';
+import 'package:audiobookshelf/Model/recent_series_response/series.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   RxList<Library> items = <Library>[].obs;
   final userController = Get.find<UserController>();
-  late Rx<Library> dropdownvalue;
+  late Rx<Library> dropdownValue;
   RxList<LibraryItem> mediaProgressionItems = <LibraryItem>[].obs;
-  RxList<LibraryItem> recentlyAddedItems = <LibraryItem>[].obs;
+  RxList<LibraryItem> recentLibraryItems = <LibraryItem>[].obs;
+  RxList<Series> recentSeries = <Series>[].obs;
+  ApiService apiService = ApiService();
   @override
   onReady() async {
     super.onReady();
-    recentlyAddedItems.value = await getRecentlyAddedLibraryItems() ?? [];
     getSortedMediaProgressItem().then((result) {
       if (result != null) {
         mediaProgressionItems.value = result;
       }
     });
-
+    recentLibraryItems.value = await getRecentlyAddedLibraryItems() ?? [];
+    recentSeries.value = await getRecentlyAddedSeries() ?? [];
+    print(recentSeries);
     update();
   }
 
   HomeController() {
-    dropdownvalue = Rx<Library>(userController.libraries[0]);
+    dropdownValue = Rx<Library>(userController.libraries[0]);
     items.value = userController.libraries;
 
     update();
@@ -43,22 +48,36 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<List<LibraryItem>?> getRecentlyAddedLibraryItems() async {
-    String libraryId = dropdownvalue.value.id!;
-    ApiService apiService = ApiService();
+  getRecentlyAddedSeries() async {
+// var url = Uri.parse('http://192.168.29.207:13378/api/libraries/lib_u4djga7qvsgfoo3txf/series?minified=1&limit=10&sort=addedAt&desc=1');
     final query = {
+      'minified': 1,
       'limit': 10,
       'sort': 'addedAt',
-      'minified': 1,
+      'desc': 1,
+    };
+
+    var response = await apiService.authenticatedGet(
+        '/api/libraries/${dropdownValue.value.id}/series',
+        queryParameters: query);
+
+    final seriesResponse = RecentSeriesResponse.fromMap(response);
+    return seriesResponse.results;
+  }
+
+  Future<List<LibraryItem>?> getRecentlyAddedLibraryItems() async {
+    String libraryId = dropdownValue.value.id!;
+    final query = {
+      'limit': 20,
+      'sort': 'addedAt',
+      'minified': 0,
       'desc': 1,
     };
     final response = await apiService.authenticatedGet(
         '/api/libraries/$libraryId/items',
         queryParameters: query);
     final libraryItems = LibraryItemsResult.fromMap(response);
-    // for (var i = 0; i < libraryItems.results!.length; i++) {
-    //   print(libraryItems.results![i].media!.metadata!.title!);
-    // }
+
     return libraryItems.results;
   }
 

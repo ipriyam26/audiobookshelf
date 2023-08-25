@@ -11,7 +11,7 @@ class Metadata {
   dynamic subtitle;
   List<Author>? authors;
   List<dynamic>? narrators;
-  List<Series>? series;
+  List<SeriesMini>? series;
   List<dynamic>? genres;
   String? publishedYear;
   dynamic publishedDate;
@@ -62,7 +62,7 @@ class Metadata {
             .toList(),
         narrators: data['narrators'] as List<dynamic>?,
         series: (data['series'] as List<dynamic>?)
-            ?.map((e) => Series.fromMap(e as Map<String, dynamic>))
+            ?.map((e) => SeriesMini.fromMap(e as Map<String, dynamic>))
             .toList(),
         genres: data['genres'] as List<dynamic>?,
         publishedYear: data['publishedYear'] as String?,

@@ -120,7 +120,7 @@ class DropDownList extends StatelessWidget {
           child: DropdownButton<Library>(
             underline: Container(),
 
-            value: homeController.dropdownvalue.value,
+            value: homeController.dropdownValue.value,
             // Down Arrow Icon
             icon: Container(),
             // Array list of items
@@ -146,7 +146,7 @@ class DropDownList extends StatelessWidget {
               );
             }).toList(),
             onChanged: (Library? newValue) {
-              homeController.dropdownvalue.value = newValue!;
+              homeController.dropdownValue.value = newValue!;
             },
           ),
         ));
