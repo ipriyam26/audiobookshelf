@@ -1,5 +1,6 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/View/home/widget/library_item_carousel.dart';
+import 'package:audiobookshelf/View/home/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -21,15 +22,18 @@ class ContinueListening extends StatelessWidget {
         ),
         Container(
           margin: EdgeInsets.only(left: 12.w, bottom: 12.h),
-          child: Text("Continue Listening",
-              style: Get.theme.textTheme.titleMedium),
+          child:
+              Text("Continue Listening", style: Get.theme.textTheme.titleLarge),
         ),
         Obx(() => homeController.mediaProgressionItems.isNotEmpty
             ? LibraryItemCarousel(
                 items: homeController.mediaProgressionItems,
                 showProgress: true,
               )
-            : Container()),
+            : LoadingShimmer(
+                height: 140.h,
+                width: 144.h,
+              )),
       ],
     );
   }

@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 
-class Author {
+class AuthorMini {
   String? id;
   String? name;
 
-  Author({this.id, this.name});
+  AuthorMini({this.id, this.name});
 
   @override
   String toString() => 'Author(id: $id, name: $name)';
 
-  factory Author.fromMap(Map<String, dynamic> data) => Author(
+  factory AuthorMini.fromMap(Map<String, dynamic> data) => AuthorMini(
         id: data['id'] as String?,
         name: data['name'] as String?,
       );
@@ -23,20 +23,20 @@ class Author {
 
   /// `dart:convert`
   ///
-  /// Parses the string and returns the resulting Json object as [Author].
-  factory Author.fromJson(String data) {
-    return Author.fromMap(json.decode(data) as Map<String, dynamic>);
+  /// Parses the string and returns the resulting Json object as [AuthorMini].
+  factory AuthorMini.fromJson(String data) {
+    return AuthorMini.fromMap(json.decode(data) as Map<String, dynamic>);
   }
 
   /// `dart:convert`
   ///
-  /// Converts [Author] to a JSON string.
+  /// Converts [AuthorMini] to a JSON string.
   String toJson() => json.encode(toMap());
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    if (other is! Author) return false;
+    if (other is! AuthorMini) return false;
     final mapEquals = const DeepCollectionEquality().equals;
     return mapEquals(other.toMap(), toMap());
   }

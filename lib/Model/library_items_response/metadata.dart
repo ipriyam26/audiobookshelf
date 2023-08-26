@@ -9,7 +9,7 @@ class Metadata {
   String? title;
   String? titleIgnorePrefix;
   dynamic subtitle;
-  List<Author>? authors;
+  List<AuthorMini>? authors;
   List<dynamic>? narrators;
   List<SeriesMini>? series;
   List<dynamic>? genres;
@@ -58,7 +58,7 @@ class Metadata {
         titleIgnorePrefix: data['titleIgnorePrefix'] as String?,
         subtitle: data['subtitle'] as dynamic,
         authors: (data['authors'] as List<dynamic>?)
-            ?.map((e) => Author.fromMap(e as Map<String, dynamic>))
+            ?.map((e) => AuthorMini.fromMap(e as Map<String, dynamic>))
             .toList(),
         narrators: data['narrators'] as List<dynamic>?,
         series: (data['series'] as List<dynamic>?)

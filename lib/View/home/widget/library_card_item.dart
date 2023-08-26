@@ -16,20 +16,23 @@ class LibraryItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LibraryItemProvider(
       item: item,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        // mainAxisAlignment: Main,
-        children: [
-          Material(
-            elevation: 16.r,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4.w),
-              child: ImageNProgress(showProgress: showProgress),
+      child: SizedBox(
+        width: 144.h,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: Main,
+          children: [
+            Material(
+              elevation: 16.r,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4.w),
+                child: ImageNProgress(showProgress: showProgress),
+              ),
             ),
-          ),
-          const TitleNAuthor()
-        ],
+            const TitleNAuthor()
+          ],
+        ),
       ),
     );
   }

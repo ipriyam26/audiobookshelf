@@ -48,6 +48,7 @@ dependencies:
   collection: ^1.17.2
   cached_network_image: ^3.2.3
   shimmer: ^3.0.0
+  flutter_svg: ^2.0.7
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,8 @@ flutter:
   assets:
     - assets/appainter_theme.json
     - assets/book_placeholder.jpg
+    - assets/author.svg
+    - assets/human.png
       # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

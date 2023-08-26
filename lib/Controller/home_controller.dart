@@ -1,4 +1,5 @@
 import 'package:audiobookshelf/Controller/user_controller.dart';
+import 'package:audiobookshelf/Model/author_response/author_response.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_items_result.dart';
 import 'package:audiobookshelf/Model/library_response/library.dart';
@@ -14,6 +15,7 @@ class HomeController extends GetxController {
   RxList<LibraryItem> mediaProgressionItems = <LibraryItem>[].obs;
   RxList<LibraryItem> recentLibraryItems = <LibraryItem>[].obs;
   RxList<Series> recentSeries = <Series>[].obs;
+  RxList<Author> recentAuthors = <Author>[].obs;
   ApiService apiService = ApiService();
   @override
   onReady() async {
@@ -25,7 +27,7 @@ class HomeController extends GetxController {
     });
     recentLibraryItems.value = await getRecentlyAddedLibraryItems() ?? [];
     recentSeries.value = await getRecentlyAddedSeries() ?? [];
-    print(recentSeries);
+    recentAuthors.value = await getRecentAuthors() ?? [];
     update();
   }
 
@@ -36,8 +38,34 @@ class HomeController extends GetxController {
     update();
   }
 
+  String getAuthorUrl(String authorID, int? updatedAt) {
+    return "${userController.server.value}/api/authors/$authorID/image?token=${userController.currentUser.value.token}&ts=$updatedAt";
+  }
+
   String getCoverUrl(String libraryItemId) {
     return "${userController.server.value}/api/items/$libraryItemId/cover?token=${userController.currentUser.value.token}";
+  }
+
+  Future<List<Author>?> getRecentAuthors() async {
+    var authors = [];
+    for (var items in recentLibraryItems) {
+      var localAuthors =
+          items.media!.metadata!.authors!.map((author) => author.id);
+      authors.addAll(localAuthors);
+    }
+    authors = authors.toSet().toList();
+    List<Author> fAuthor = [];
+    var param = {
+      'include': 'items',
+    };
+    for (var author in authors) {
+      var response = await apiService.authenticatedGet("/api/authors/$author",
+          queryParameters: param);
+      final tAuthor = Author.fromMap(response);
+      fAuthor.add(tAuthor);
+    }
+    // print(fAuthor);
+    return fAuthor;
   }
 
   String getAuthor(LibraryItem item) {
@@ -48,8 +76,7 @@ class HomeController extends GetxController {
     }
   }
 
-  getRecentlyAddedSeries() async {
-// var url = Uri.parse('http://192.168.29.207:13378/api/libraries/lib_u4djga7qvsgfoo3txf/series?minified=1&limit=10&sort=addedAt&desc=1');
+  Future<List<Series>?> getRecentlyAddedSeries() async {
     final query = {
       'minified': 1,
       'limit': 10,

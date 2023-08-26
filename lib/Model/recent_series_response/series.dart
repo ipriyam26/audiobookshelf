@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:collection/collection.dart';
 
-
-
 class Series {
   String? id;
   String? name;
