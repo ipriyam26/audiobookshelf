@@ -1,5 +1,5 @@
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
-import 'package:audiobookshelf/View/home/widget/library_card_item.dart';
+import 'package:audiobookshelf/Utils/library_card_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

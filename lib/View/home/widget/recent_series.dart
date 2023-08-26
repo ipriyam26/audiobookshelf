@@ -1,6 +1,6 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/Model/recent_series_response/series.dart';
-import 'package:audiobookshelf/View/home/widget/loading.dart';
+import 'package:audiobookshelf/Utils/loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
