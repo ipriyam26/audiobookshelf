@@ -677,7 +677,7 @@
           "textBaseline": "alphabetic"
         },
         "headlineMedium": {
-          "fontSize": 34,
+          "fontSize": 32,
           "fontWeight": "w400",
           "inherit": false,
           "textBaseline": "alphabetic"

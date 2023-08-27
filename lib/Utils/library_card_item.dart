@@ -1,5 +1,6 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
+import 'package:audiobookshelf/View/library_item.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,22 +17,29 @@ class LibraryItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LibraryItemProvider(
       item: item,
-      child: SizedBox(
-        width: 144.h,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisAlignment: Main,
-          children: [
-            Material(
-              elevation: 16.r,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4.w),
-                child: ImageNProgress(showProgress: showProgress),
+      child: InkWell(
+        onTap: () {
+          Get.to(
+            () => LibraryItemView(item: item),
+            transition: Transition.cupertino,
+          );
+        },
+        child: SizedBox(
+          width: 144.h,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Material(
+                elevation: 16.r,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4.w),
+                  child: ImageNProgress(showProgress: showProgress),
+                ),
               ),
-            ),
-            const TitleNAuthor()
-          ],
+              const TitleNAuthor()
+            ],
+          ),
         ),
       ),
     );

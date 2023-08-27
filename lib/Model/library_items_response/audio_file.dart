@@ -1,14 +1,14 @@
 import 'dart:convert';
 
+import 'package:audiobookshelf/Model/library_items_response/audio_metadata.dart';
 import 'package:collection/collection.dart';
 
 import 'meta_tags.dart';
-import 'metadata.dart';
 
 class AudioFile {
   int? index;
   String? ino;
-  Metadata? metadata;
+  AudioMetadata? metadata;
   int? addedAt;
   int? updatedAt;
   int? trackNumFromMeta;
@@ -70,7 +70,7 @@ class AudioFile {
         ino: data['ino'] as String?,
         metadata: data['metadata'] == null
             ? null
-            : Metadata.fromMap(data['metadata'] as Map<String, dynamic>),
+            : AudioMetadata.fromMap(data['metadata'] as Map<String, dynamic>),
         addedAt: data['addedAt'] as int?,
         updatedAt: data['updatedAt'] as int?,
         trackNumFromMeta: data['trackNumFromMeta'] as int?,

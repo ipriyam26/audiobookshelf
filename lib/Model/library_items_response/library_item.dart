@@ -25,7 +25,7 @@ class LibraryItem {
   bool? isMissing;
   bool? isInvalid;
   String? mediaType;
-  Media? media;
+  Media media;
   List<LibraryFile>? libraryFiles;
   int? size;
 
@@ -47,7 +47,7 @@ class LibraryItem {
     this.isMissing,
     this.isInvalid,
     this.mediaType,
-    this.media,
+    required this.media,
     this.libraryFiles,
     this.size,
   });
@@ -76,7 +76,7 @@ class LibraryItem {
         isInvalid: data['isInvalid'] as bool?,
         mediaType: data['mediaType'] as String?,
         media: data['media'] == null
-            ? null
+            ? Media()
             : Media.fromMap(data['media'] as Map<String, dynamic>),
         libraryFiles: (data['libraryFiles'] as List<dynamic>?)
             ?.map((e) => LibraryFile.fromMap(e as Map<String, dynamic>))
@@ -102,7 +102,7 @@ class LibraryItem {
         'isMissing': isMissing,
         'isInvalid': isInvalid,
         'mediaType': mediaType,
-        'media': media?.toMap(),
+        'media': media.toMap(),
         'libraryFiles': libraryFiles?.map((e) => e.toMap()).toList(),
         'size': size,
       };

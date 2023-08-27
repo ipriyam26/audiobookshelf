@@ -59,3 +59,33 @@ class TextOutlineButton extends StatelessWidget {
           );
   }
 }
+
+class OptionIconButton extends StatelessWidget {
+  const OptionIconButton({
+    super.key,
+    this.onPressed,
+    required this.icon,
+  });
+  final void Function()? onPressed;
+  final IconData icon;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 36.h,
+      width: 36.h,
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 27, 27, 27),
+        border: Border.all(color: Colors.white, width: 0.2.w),
+        borderRadius: BorderRadius.circular(4.w),
+      ),
+      child: IconButton(
+          padding: EdgeInsets.zero,
+          // alignment: Alignment.bottomCenter,
+          onPressed: onPressed,
+          icon: Icon(
+            icon,
+            size: 28.w,
+          )),
+    );
+  }
+}
