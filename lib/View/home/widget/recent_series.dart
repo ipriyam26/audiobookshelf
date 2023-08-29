@@ -1,6 +1,7 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/Model/recent_series_response/series.dart';
 import 'package:audiobookshelf/Utils/loading.dart';
+import 'package:audiobookshelf/View/series.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -52,35 +53,44 @@ class SeriesItemCarousel extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
-          return Column(
-            // mainAxisAlignment: Main,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              BookStack(
-                  images: items[index]
-                      .books!
-                      .map((book) => homeController.getCoverUrl(book.id!))
-                      .toList()),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(items[index].name ?? "",
-                      style: Get.theme.textTheme.titleLarge!
-                          .copyWith(fontWeight: FontWeight.w400),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis),
-                  SizedBox(
-                    height: 4.h,
-                  ),
-                  Text(
-                    items[index].books![0].media!.metadata!.authorName ?? "",
-                    style: Get.theme.textTheme.titleSmall!
-                        .copyWith(color: Get.theme.colorScheme.outline),
-                  ),
-                ],
-              )
-            ],
+          return InkWell(
+            onTap: () {
+              // push the SeriesView screen
+              Get.to(
+                () => SeriesView(item: items[index]),
+                transition: Transition.cupertino,
+              );
+            },
+            child: Column(
+              // mainAxisAlignment: Main,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                BookStack(
+                    images: items[index]
+                        .books!
+                        .map((book) => homeController.getCoverUrl(book.id))
+                        .toList()),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(items[index].name ?? "",
+                        style: Get.theme.textTheme.titleLarge!
+                            .copyWith(fontWeight: FontWeight.w400),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                    SizedBox(
+                      height: 4.h,
+                    ),
+                    Text(
+                      items[index].books![0].media.metadata.authorName ?? "",
+                      style: Get.theme.textTheme.titleSmall!
+                          .copyWith(color: Get.theme.colorScheme.outline),
+                    ),
+                  ],
+                )
+              ],
+            ),
           );
         },
         itemCount: items.length,

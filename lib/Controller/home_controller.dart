@@ -50,7 +50,7 @@ class HomeController extends GetxController {
     var authors = [];
     for (var items in recentLibraryItems) {
       var localAuthors =
-          items.media!.metadata!.authors!.map((author) => author.id);
+          items.media.metadata.authors!.map((author) => author.id);
       authors.addAll(localAuthors);
     }
     authors = authors.toSet().toList();
@@ -70,7 +70,7 @@ class HomeController extends GetxController {
 
   String getAuthor(LibraryItem item) {
     try {
-      return item.media!.metadata!.authors![0].name!;
+      return item.media.metadata.authors![0].name!;
     } catch (e) {
       return "Unknown";
     }

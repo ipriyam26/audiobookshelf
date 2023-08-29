@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:audiobookshelf/Controller/home_controller.dart';
+import 'package:audiobookshelf/Controller/library_item_controller.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Utils/button.dart';
 import 'package:audiobookshelf/View/home/home.dart';
@@ -14,16 +17,11 @@ class LibraryItemView extends StatelessWidget {
   LibraryItemView({super.key, required this.item});
   final LibraryItem item;
 
-  Map<String, int> convertToHours(int totalSeconds) {
-    final int hours = totalSeconds ~/ 3600;
-    final int minutes = (totalSeconds % 3600) ~/ 60;
-    final int seconds = totalSeconds % 60;
-    return {'hours': hours, 'minutes': minutes, 'seconds': seconds};
-  }
-
   final homeController = Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(LibraryItemController(item));
+
     var searchNDrawer = [
       IconButton(
           onPressed: () {},
@@ -67,91 +65,94 @@ class LibraryItemView extends StatelessWidget {
         ),
         body: ListView(
           children: [
-            TitleImage(itemId: item.id!),
+            TitleImage(),
             Container(
               margin: EdgeInsets.symmetric(vertical: 20.h),
               child: Text(
-                item.media.metadata!.title ?? "Failed to Load",
+                controller.item.value.title,
                 style: Get.theme.textTheme.headlineMedium!
                     .copyWith(fontWeight: FontWeight.w600),
                 textAlign: TextAlign.center,
               ),
             ),
             const ActionButtons(),
-            ProgressCard(item: item),
-            BookMetadata(item: item),
-            Description(item: item),
-            ChapterList(item: item),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.r),
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 10.h),
-                width: Get.width,
-                color: Get.theme.colorScheme.onSurface.withOpacity(0.1),
-                child: ExpansionTile(
-                  title: SizedBox(
-                    height: 40.h,
-                    child: Row(
-                      children: [
-                        Text(
-                          "Audio Tracks",
-                          style: Get.theme.textTheme.headlineSmall,
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10.w),
-                          padding: EdgeInsets.all(8.r),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Get.theme.colorScheme.background,
-                          ),
-                          child:
-                              Text("${(item.media.audioFiles ?? []).length}"),
-                        )
-                      ],
-                    ),
-                  ),
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.r),
-                      ),
-                      height: 40.h *
-                          (item.media.audioFiles ?? [])
-                              .length
-                              .toDouble()
-                              .clamp(0, 8),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-
-                        // physics: const (),
-                        itemCount: (item.media.audioFiles ?? []).length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            // tileColor: ,
-                            title: Text(
-                              item.media.audioFiles![index].metadata!
-                                      .filename ??
-                                  "Failed to Load",
-                              style: Get.theme.textTheme.headlineSmall!
-                                  .copyWith(fontSize: 14.sp),
-                            ),
-                            trailing: IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.play_arrow,
-                                size: 24.sp,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
+            ProgressCard(),
+            BookMetadata(),
+            Description(),
+            ChapterList(),
+            AudioFiles()
           ],
         ));
+  }
+}
+
+class AudioFiles extends StatelessWidget {
+  AudioFiles({
+    super.key,
+  });
+
+  final LibraryItemController controller = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 10.h),
+      width: Get.width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.r),
+        color: Get.theme.colorScheme.onSurface.withOpacity(0.1),
+      ),
+      child: ExpansionTile(
+        title: SizedBox(
+          height: 40.h,
+          child: Row(
+            children: [
+              Text(
+                "Audio Tracks",
+                style: Get.theme.textTheme.headlineSmall,
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 10.w),
+                padding: EdgeInsets.all(8.r),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Get.theme.colorScheme.background,
+                ),
+                child: Obx(() =>
+                    Text(controller.item.value.audioFiles.length.toString())),
+              )
+            ],
+          ),
+        ),
+        children: [
+          Obx(() => Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+                height: 40.h *
+                    controller.item.value.audioFiles.length
+                        .toDouble()
+                        .clamp(0, 8),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.item.value.audioFiles.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                        controller.getAudioFileNames(index),
+                        style: Get.theme.textTheme.headlineSmall!
+                            .copyWith(fontSize: 14.sp),
+                      ),
+                      trailing: Text(
+                        controller.item.value.audioFiles[index].getDuration(),
+                      ),
+                    );
+                  },
+                ),
+              )),
+        ],
+      ),
+    );
   }
 }
 
@@ -193,31 +194,15 @@ class ActionButtons extends StatelessWidget {
 }
 
 class ProgressCard extends StatelessWidget {
-  const ProgressCard({
+  ProgressCard({
     super.key,
-    required this.item,
   });
 
-  final LibraryItem item;
-  String getLeftOverTime() {
-    try {
-      final double leftTime =
-          item.media.duration! - item.mediaProgress!.currentTime!;
-      final int totalSeconds =
-          leftTime.floor(); // Convert to nearest lower integer
-
-      final int hours = totalSeconds ~/ 3600;
-      final int minutes = (totalSeconds % 3600) ~/ 60;
-
-      return '$hours hr $minutes min';
-    } catch (e) {
-      return "Not able to process";
-    }
-  }
+  final LibraryItemController controller = Get.find<LibraryItemController>();
 
   @override
   Widget build(BuildContext context) {
-    return item.mediaProgress != null
+    return controller.item.value.mediaProgress != null
         ? Container(
             margin: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.h),
             width: Get.width,
@@ -229,10 +214,9 @@ class ProgressCard extends StatelessWidget {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                      "Your Progress:  ${(item.mediaProgress!.progress! * 100).toInt()}%",
+                  Text(controller.item.value.itemProgress,
                       style: Get.theme.textTheme.headlineSmall),
-                  Text("${getLeftOverTime()} sec left",
+                  Text(controller.getLeftOverTime(),
                       style: Get.theme.textTheme.titleLarge!.copyWith(
                         color: Get.theme.colorScheme.outline,
                       )),
@@ -243,249 +227,161 @@ class ProgressCard extends StatelessWidget {
 }
 
 class Description extends StatelessWidget {
-  const Description({
+  Description({
     super.key,
-    required this.item,
   });
 
-  final LibraryItem item;
+  final LibraryItemController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10.w),
-      child: ReadMoreText(
-        item.media.metadata!.description ?? "Failed to Load",
-        style: Get.theme.textTheme.headlineSmall!.copyWith(fontSize: 16.sp),
-        trimLines: 5,
-        colorClickableText: Get.theme.colorScheme.primary,
-        trimMode: TrimMode.Line,
-        trimCollapsedText: 'Show more',
-        trimExpandedText: 'Show less',
-        // moreStyle:
-        // ,
-      ),
-    );
+    return controller.item.value.description.isNotEmpty
+        ? Container(
+            margin: EdgeInsets.symmetric(horizontal: 10.w),
+            child: ReadMoreText(
+              controller.item.value.description,
+              style:
+                  Get.theme.textTheme.headlineSmall!.copyWith(fontSize: 16.sp),
+              trimLines: 5,
+              colorClickableText: Get.theme.colorScheme.primary,
+              trimMode: TrimMode.Line,
+              trimCollapsedText: 'Show more',
+              trimExpandedText: 'Show less',
+              // moreStyle:
+              // ,
+            ),
+          )
+        : Container();
   }
 }
 
 class BookMetadata extends StatelessWidget {
-  const BookMetadata({super.key, required this.item});
-  final LibraryItem item;
-
-  Map<String, int> convertToHours(int totalSeconds) {
-    final int hours = totalSeconds ~/ 3600;
-    final int minutes = (totalSeconds % 3600) ~/ 60;
-    final int seconds = totalSeconds % 60;
-    return {'hours': hours, 'minutes': minutes, 'seconds': seconds};
-  }
-
-  String getDuration() {
-    try {
-      final int totalSeconds =
-          item.media.duration!.floor(); // Convert to nearest lower integer
-      final Map<String, int> time = convertToHours(totalSeconds);
-      final hour = time["hours"];
-      final minutes = time["minutes"];
-      return '$hour hr $minutes min';
-    } catch (e) {
-      return "Not able to process";
-    }
-  }
-
-  String getChapterDuration(
-    double start,
-  ) {
-    try {
-      final time = convertToHours(start.toInt());
-      final hour = time["hours"]!;
-      final minutes = time["minutes"]!;
-      final seconds = time["seconds"]!;
-      String chaptertime = hour < 10 ? "0$hour" : "$hour";
-      chaptertime += ":${minutes < 10 ? "0$minutes" : "$minutes"}";
-      chaptertime += ":${seconds < 10 ? "0$seconds" : "$seconds"}";
-      return chaptertime;
-    } catch (e) {
-      return "Not able to process";
-    }
-  }
-
-  String handleJoins(List<dynamic>? listItems) {
-    try {
-      final genres = listItems!.join(", ");
-      return genres;
-    } catch (e) {
-      return "Not able to process";
-    }
-  }
-
-  String getGenres() {
-    try {
-      String genres = item.media.metadata!.series!.join(", ");
-      return genres;
-    } catch (e) {
-      return "Not able to process";
-    }
-  }
-
-  String getSeries() {
-    try {
-      String series =
-          item.media.metadata!.series!.map((e) => e.name).join(", ");
-      return series;
-    } catch (e) {
-      return "Not able to process";
-    }
-  }
+  BookMetadata({super.key});
+  final LibraryItemController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10.h, vertical: 20.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (item.media.metadata!.authorName != null)
-            MetadataRow(
-              title: "AUTHOR",
-              value: item.media.metadata!.authorName!,
-            ),
-          if (item.media.metadata!.series != null &&
-              item.media.metadata!.series!.isNotEmpty)
-            MetadataRow(
-              title: "SERIES",
-              value: getSeries(),
-            ),
-          if (item.media.duration != null)
-            MetadataRow(
-              title: "DURATION",
-              value: getDuration(),
-            ),
-          if (item.media.metadata!.narrators != null &&
-              item.media.metadata!.narrators!.isNotEmpty)
-            MetadataRow(
-              title: "NARRATOR",
-              value: handleJoins(item.media.metadata!.narrators!),
-            ),
-          if (item.media.metadata!.genres != null &&
-              item.media.metadata!.genres!.isNotEmpty)
-            MetadataRow(
-              title: "GENRE",
-              value: handleJoins(
-                item.media.metadata!.genres,
-              ),
-            ),
-          if (item.media.metadata!.publishedYear != null)
-            MetadataRow(
-              title: "PUBLISHED",
-              value: item.media.metadata!.publishedYear.toString(),
-            ),
-        ],
-      ),
+      child: Obx(() => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (controller.item.value.authorName.isNotEmpty)
+                MetadataRow(
+                  title: "AUTHOR",
+                  value: controller.item.value.authorName,
+                ),
+              if (controller.item.value.serieNames.isNotEmpty)
+                MetadataRow(
+                  title: "SERIES",
+                  value: controller.item.value.serieNames,
+                ),
+              if (controller.item.value.media.duration != null)
+                MetadataRow(
+                  title: "DURATION",
+                  value: controller.item.value.getDuration(),
+                ),
+              if (controller.item.value.narratorNames.isNotEmpty)
+                MetadataRow(
+                  title: "NARRATOR",
+                  value: controller.item.value.narratorNames,
+                ),
+              if (controller.item.value.genreNames.isNotEmpty)
+                MetadataRow(
+                  title: "GENRE",
+                  value: controller.item.value.genreNames,
+                ),
+              if (controller.item.value.publishedYear.isNotEmpty)
+                MetadataRow(
+                  title: "PUBLISHED",
+                  value: controller.item.value.publishedYear,
+                ),
+            ],
+          )),
     );
   }
 }
 
 class ChapterList extends StatelessWidget {
-  const ChapterList({
+  ChapterList({
     super.key,
-    required this.item,
   });
 
-  final LibraryItem item;
-  Map<String, int> convertToHours(int totalSeconds) {
-    final int hours = totalSeconds ~/ 3600;
-    final int minutes = (totalSeconds % 3600) ~/ 60;
-    final int seconds = totalSeconds % 60;
-    return {'hours': hours, 'minutes': minutes, 'seconds': seconds};
-  }
-
-  String getChapterDuration(
-    double start,
-  ) {
-    try {
-      final time = convertToHours(start.toInt());
-      final hour = time["hours"]!;
-      final minutes = time["minutes"]!;
-      final seconds = time["seconds"]!;
-      String chaptertime = hour < 10 ? "0$hour" : "$hour";
-      chaptertime += ":${minutes < 10 ? "0$minutes" : "$minutes"}";
-      chaptertime += ":${seconds < 10 ? "0$seconds" : "$seconds"}";
-      return chaptertime;
-    } catch (e) {
-      return "Not able to process";
-    }
-  }
+  final LibraryItemController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8.r),
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.h),
-        width: Get.width,
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.h),
+      width: Get.width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.r),
         color: Get.theme.colorScheme.onSurface.withOpacity(0.1),
-        child: ExpansionTile(
-          title: SizedBox(
-            height: 40.h,
-            child: Row(
-              children: [
-                Text(
-                  "Chapters",
-                  style: Get.theme.textTheme.headlineSmall,
+      ),
+      child: ExpansionTile(
+        title: SizedBox(
+          height: 40.h,
+          child: Row(
+            children: [
+              Text(
+                "Chapters",
+                style: Get.theme.textTheme.headlineSmall,
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 10.w),
+                padding: EdgeInsets.all(8.r),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Get.theme.colorScheme.background,
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10.w),
-                  padding: EdgeInsets.all(8.r),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Get.theme.colorScheme.background,
-                  ),
-                  child: Text("${(item.media.chapters ?? []).length}"),
-                )
-              ],
-            ),
+                child: Obx(() =>
+                    Text(controller.item.value.chapterList.length.toString())),
+              )
+            ],
           ),
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.r),
-              ),
-              height: 40.h *
-                  (item.media.audioFiles ?? []).length.toDouble().clamp(0, 8),
-              child: ListView.builder(
-                shrinkWrap: true,
-
-                // physics: const (),
-                itemCount: (item.media.chapters ?? []).length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    // tileColor: ,
-                    title: Text(
-                      item.media.chapters![index].title ?? "Failed to Load",
-                      style: Get.theme.textTheme.headlineSmall!
-                          .copyWith(fontSize: 14.sp),
-                    ),
-                    subtitle: Text(
-                      getChapterDuration(item.media.chapters![index].start!),
-                      style: Get.theme.textTheme.headlineSmall!.copyWith(
-                        fontSize: 14.sp,
-                        color: Get.theme.colorScheme.outline,
-                      ),
-                    ),
-                    trailing: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.play_arrow,
-                        size: 24.sp,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
         ),
+        children: [
+          Obx(() => Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+                height: 40.h *
+                    controller.item.value.chapterList.length
+                        .toDouble()
+                        .clamp(0, 8),
+                child: ListView.builder(
+                  shrinkWrap: true,
+
+                  // physics: const (),
+                  itemCount: controller.item.value.chapterList.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      // tileColor: ,
+                      title: Text(
+                        controller.getChapterNames(index),
+                        style: Get.theme.textTheme.headlineSmall!
+                            .copyWith(fontSize: 14.sp),
+                      ),
+                      subtitle: Text(
+                        controller.getChapterDuration(
+                            controller.item.value.chapterList[index].start!),
+                        style: Get.theme.textTheme.headlineSmall!.copyWith(
+                          fontSize: 14.sp,
+                          color: Get.theme.colorScheme.outline,
+                        ),
+                      ),
+                      trailing: IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.play_arrow,
+                          size: 24.sp,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )),
+        ],
       ),
     );
   }
@@ -536,33 +432,88 @@ class MetadataRow extends StatelessWidget {
 class TitleImage extends StatelessWidget {
   TitleImage({
     super.key,
-    required this.itemId,
+    // required this.itemId,
   });
 
-  final String itemId;
-  final HomeController homeController = Get.find<HomeController>();
+  // final String itemId = Get.fi;
+  final LibraryItemController controller = Get.find();
+  final HomeController homeController = Get.find();
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
-      // alignment: Alignment.ce,
-      imageUrl: homeController.getCoverUrl(itemId),
-      height: Get.height * 0.4,
-      width: Get.width,
-      fit: BoxFit.fill,
-      placeholder: (context, url) => Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
-        child: Container(
-          height: Get.height * 0.4,
-          color: Colors.white,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Stack(
+          children: [
+            // Blurred Background
+            Positioned.fill(
+              child: CachedNetworkImage(
+                imageUrl: controller.getCoverUrl(),
+                height: Get.height * 0.4,
+                width: Get.width,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    height: Get.height * 0.4,
+                    color: Colors.white,
+                  ),
+                ),
+                errorWidget: (context, url, error) => Image.asset(
+                  "assets/book_placeholder.jpg",
+                  height: Get.height * 0.4,
+                  width: Get.width,
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  color: Colors.black.withOpacity(0.1),
+                ),
+              ),
+            ),
+
+            // Actual Image
+            CachedNetworkImage(
+              imageUrl: controller.getCoverUrl(),
+              height: Get.height * 0.4,
+              width: Get.width,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  height: Get.height * 0.4,
+                  color: Colors.white,
+                ),
+              ),
+              errorWidget: (context, url, error) => Image.asset(
+                "assets/book_placeholder.jpg",
+                height: Get.height * 0.4,
+                width: Get.width,
+                fit: BoxFit.fill,
+              ),
+            ),
+          ],
         ),
-      ),
-      errorWidget: (context, url, error) => Image.asset(
-        "assets/book_placeholder.jpg",
-        height: Get.height * 0.4,
-        width: Get.width,
-        fit: BoxFit.fill,
-      ),
+        // use controller.item.value.progress.value to display a progress bar
+        Obx(() {
+          if (controller.item.value.mediaProgress != null) {
+            return Container(
+              height: 4.h,
+              width: (controller.item.value.mediaProgress!.progress ?? 0) *
+                  Get.width,
+              color: Get.theme.colorScheme.primary,
+            );
+          } else {
+            return Container();
+          }
+        })
+      ],
     );
   }
 }

@@ -9,7 +9,7 @@ class Series {
   String? nameIgnorePrefix;
   String? nameIgnorePrefixSort;
   String? type;
-  List<LibraryItem>? books;
+  List<LibraryItem> books;
   int? addedAt;
   double? totalDuration;
 
@@ -19,7 +19,7 @@ class Series {
     this.nameIgnorePrefix,
     this.nameIgnorePrefixSort,
     this.type,
-    this.books,
+    required this.books,
     this.addedAt,
     this.totalDuration,
   });
@@ -36,7 +36,7 @@ class Series {
         nameIgnorePrefixSort: data['nameIgnorePrefixSort'] as String?,
         type: data['type'] as String?,
         books: (data['books'] as List<dynamic>?)
-            ?.map((e) => LibraryItem.fromMap(e as Map<String, dynamic>))
+            !.map((e) => LibraryItem.fromMap(e as Map<String, dynamic>))
             .toList(),
         addedAt: data['addedAt'] as int?,
         totalDuration: (data['totalDuration'] as num?)?.toDouble(),
@@ -48,7 +48,7 @@ class Series {
         'nameIgnorePrefix': nameIgnorePrefix,
         'nameIgnorePrefixSort': nameIgnorePrefixSort,
         'type': type,
-        'books': books?.map((e) => e.toMap()).toList(),
+        'books': books.map((e) => e.toMap()).toList(),
         'addedAt': addedAt,
         'totalDuration': totalDuration,
       };
@@ -83,4 +83,6 @@ class Series {
       books.hashCode ^
       addedAt.hashCode ^
       totalDuration.hashCode;
+
+  String get nameCount => "$name (${(books).length})";
 }

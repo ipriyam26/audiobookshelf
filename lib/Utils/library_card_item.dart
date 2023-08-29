@@ -133,7 +133,7 @@ class TitleNAuthor extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(item.media!.metadata!.title ?? "",
+        Text(item.media.metadata.title ?? "",
             style: Get.theme.textTheme.titleMedium,
             maxLines: 1,
             overflow: TextOverflow.ellipsis),

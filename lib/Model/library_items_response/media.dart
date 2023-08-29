@@ -9,7 +9,7 @@ import 'track.dart';
 
 class Media {
   String? libraryItemId;
-  Metadata? metadata;
+  Metadata metadata;
   String? coverPath;
   List<dynamic>? tags;
   List<AudioFile>? audioFiles;
@@ -21,8 +21,8 @@ class Media {
   dynamic ebookFile;
 
   Media({
-    this.libraryItemId,
-    this.metadata,
+    required this.libraryItemId,
+    required this.metadata,
     this.coverPath,
     this.tags,
     this.audioFiles,
@@ -34,6 +34,20 @@ class Media {
     this.ebookFile,
   });
 
+  factory Media.empty() => Media(
+        libraryItemId: "",
+        metadata: Metadata.empty(),
+        coverPath: "",
+        tags: [],
+        audioFiles: [],
+        chapters: [],
+        duration: 0,
+        size: 0,
+        tracks: [],
+        missingParts: [],
+        ebookFile: "",
+      );
+
   @override
   String toString() {
     return 'Media(libraryItemId: $libraryItemId, metadata: $metadata, coverPath: $coverPath, tags: $tags, audioFiles: $audioFiles, chapters: $chapters, duration: $duration, size: $size, tracks: $tracks, missingParts: $missingParts, ebookFile: $ebookFile)';
@@ -41,9 +55,7 @@ class Media {
 
   factory Media.fromMap(Map<String, dynamic> data) => Media(
         libraryItemId: data['libraryItemId'] as String?,
-        metadata: data['metadata'] == null
-            ? null
-            : Metadata.fromMap(data['metadata'] as Map<String, dynamic>),
+        metadata: Metadata.fromMap(data['metadata'] as Map<String, dynamic>),
         coverPath: data['coverPath'] as String?,
         tags: data['tags'] as List<dynamic>?,
         audioFiles: (data['audioFiles'] as List<dynamic>?)
@@ -63,7 +75,7 @@ class Media {
 
   Map<String, dynamic> toMap() => {
         'libraryItemId': libraryItemId,
-        'metadata': metadata?.toMap(),
+        'metadata': metadata.toMap(),
         'coverPath': coverPath,
         'tags': tags,
         'audioFiles': audioFiles?.map((e) => e.toMap()).toList(),
@@ -108,4 +120,21 @@ class Media {
       tracks.hashCode ^
       missingParts.hashCode ^
       ebookFile.hashCode;
+
+  String formatDuration({bool? english = false}) {
+    final int totalSeconds = duration!.toInt();
+    final int hours = totalSeconds ~/ 3600;
+    final int minutes = (totalSeconds % 3600) ~/ 60;
+    final int seconds = totalSeconds % 60;
+
+    if (english!) {
+      return hours > 0
+          ? "$hours hr ${minutes.toString().padLeft(2, '0')} min"
+          : "$minutes min ${seconds.toString().padLeft(2, '0')} sec";
+    }
+
+    return hours > 0
+        ? "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}"
+        : "$minutes:${seconds.toString().padLeft(2, '0')}";
+  }
 }

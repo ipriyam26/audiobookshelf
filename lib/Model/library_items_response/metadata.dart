@@ -10,7 +10,7 @@ class Metadata {
   String? titleIgnorePrefix;
   dynamic subtitle;
   List<AuthorMini>? authors;
-  List<dynamic>? narrators;
+  List<String>? narrators;
   List<SeriesMini>? series;
   List<dynamic>? genres;
   String? publishedYear;
@@ -48,6 +48,27 @@ class Metadata {
     this.seriesName,
   });
 
+  factory Metadata.empty() => Metadata(
+        title: "",
+        titleIgnorePrefix: "",
+        subtitle: "",
+        authors: [],
+        narrators: [],
+        series: [],
+        genres: [],
+        publishedYear: "",
+        publishedDate: "",
+        publisher: "",
+        description: "",
+        isbn: "",
+        asin: "",
+        language: "",
+        explicit: false,
+        authorName: "",
+        authorNameLf: "",
+        narratorName: "",
+        seriesName: "",
+      );
   @override
   String toString() {
     return 'Metadata(title: $title, titleIgnorePrefix: $titleIgnorePrefix, subtitle: $subtitle, authors: $authors, narrators: $narrators, series: $series, genres: $genres, publishedYear: $publishedYear, publishedDate: $publishedDate, publisher: $publisher, description: $description, isbn: $isbn, asin: $asin, language: $language, explicit: $explicit, authorName: $authorName, authorNameLf: $authorNameLf, narratorName: $narratorName, seriesName: $seriesName)';
@@ -60,7 +81,9 @@ class Metadata {
         authors: (data['authors'] as List<dynamic>?)
             ?.map((e) => AuthorMini.fromMap(e as Map<String, dynamic>))
             .toList(),
-        narrators: data['narrators'] as List<dynamic>?,
+        narrators: (data['narrators'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList(),
         series: (data['series'] as List<dynamic>?)
             ?.map((e) => SeriesMini.fromMap(e as Map<String, dynamic>))
             .toList(),

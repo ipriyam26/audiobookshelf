@@ -172,4 +172,23 @@ class AudioFile {
       embeddedCoverArt.hashCode ^
       metaTags.hashCode ^
       mimeType.hashCode;
+  Map<String, int> convertToHours(int totalSeconds) {
+    final int hours = totalSeconds ~/ 3600;
+    final int minutes = (totalSeconds % 3600) ~/ 60;
+    final int seconds = totalSeconds % 60;
+    return {'hours': hours, 'minutes': minutes, 'seconds': seconds};
+  }
+
+  String getDuration() {
+    try {
+      final int totalSeconds =
+          duration!.floor(); // Convert to nearest lower integer
+      final Map<String, int> time = convertToHours(totalSeconds);
+      final hour = time["hours"];
+      final minutes = time["minutes"];
+      return '$hour hr $minutes min';
+    } catch (e) {
+      return "Not able to process";
+    }
+  }
 }
