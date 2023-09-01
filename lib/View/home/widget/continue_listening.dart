@@ -21,7 +21,8 @@ class ContinueListening extends StatelessWidget {
     return userController.currentUser.value.mediaProgress!.isNotEmpty
         ? Obx(() => LibraryView(
               title: "Continue Listening",
-              items: homeController.mediaProgressionItems,
+              // ignore: invalid_use_of_protected_member
+              items: homeController.mediaProgressionItems.value,
               condition: homeController.continueListeningGridView.value,
               onGridButtonPressed: _onGridButtonPressed,
             ))

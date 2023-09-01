@@ -1,13 +1,11 @@
 import 'package:audiobookshelf/Controller/series_controller.dart';
 import 'package:audiobookshelf/Model/recent_series_response/series.dart';
 import 'package:audiobookshelf/View/home/widget/drop_down_list.dart';
-import 'package:audiobookshelf/View/library_item.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:audiobookshelf/View/home/widget/library_item_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
 
 class SeriesView extends StatelessWidget {
   const SeriesView({super.key, required this.item});
@@ -71,90 +69,10 @@ class SeriesView extends StatelessWidget {
         ),
         body: ListView.builder(
           itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                Get.to(
-                  () => LibraryItemView(
-                    item: item.books[index],
-                  ),
-                  transition: Transition.cupertino,
-                );
-              },
-              child: Row(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: 12.w, top: 12.h),
-                    child: CachedNetworkImage(
-                      imageBuilder: (context, imageProvider) {
-                        return Container(
-                          height: 70.h,
-                          width: 70.h,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.r),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
-                      },
-                      imageUrl: controller.getCoverUrl(index),
-                      // height: 70.h,
-                      // width: 70.h,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Shimmer.fromColors(
-                        baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.grey[100]!,
-                        child: Container(
-                          height: 70.h,
-                          width: 70.h,
-                          color: Colors.white,
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Image.asset(
-                        "assets/book_placeholder.jpg",
-                        // height: Get.height * 0.4,
-                        height: 70.h,
-                        width: 70.h,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(left: 12.w, top: 12.h),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.books[index].title,
-                            style: Get.theme.textTheme.bodyLarge!.copyWith(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white),
-                          ),
-                          SizedBox(
-                            height: 4.h,
-                          ),
-                          Text(
-                            "by ${item.books[index].authorName}",
-                            style: Get.theme.textTheme.bodyMedium!.copyWith(
-                                color: Get.theme.colorScheme.onSurfaceVariant),
-                          ),
-                          SizedBox(
-                            height: 4.h,
-                          ),
-                          Text(
-                            item.books[index].media
-                                .formatDuration(english: true),
-                            style: Get.theme.textTheme.bodyMedium!.copyWith(
-                                color: Get.theme.colorScheme.onSurfaceVariant),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            final String imageUrl = controller.getCoverUrl(index);
+            return LibraryItemListView(
+              item: item.books[index],
+              imageUrl: imageUrl,
             );
           },
           itemCount: (item.books).length,

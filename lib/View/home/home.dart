@@ -1,4 +1,5 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
+import 'package:audiobookshelf/View/home/tabs/books.dart';
 import 'package:audiobookshelf/View/home/tabs/home.dart';
 import 'package:audiobookshelf/View/home/widget/drop_down_list.dart';
 import 'package:audiobookshelf/View/home/widget/end_drawer.dart';
@@ -92,7 +93,8 @@ class HomeScreen extends StatelessWidget {
         body: TabBarView(
           children: [
             HomeTab(),
-            const Icon(Icons.directions_transit, size: 350),
+
+            BookTab(),
             const Icon(Icons.book, size: 350),
             const Icon(Icons.shelves, size: 350),
             const Icon(Icons.directions_car, size: 350),

@@ -122,19 +122,23 @@ class Media {
       ebookFile.hashCode;
 
   String formatDuration({bool? english = false}) {
-    final int totalSeconds = duration!.toInt();
-    final int hours = totalSeconds ~/ 3600;
-    final int minutes = (totalSeconds % 3600) ~/ 60;
-    final int seconds = totalSeconds % 60;
+    try {
+      final int totalSeconds = duration!.toInt();
+      final int hours = totalSeconds ~/ 3600;
+      final int minutes = (totalSeconds % 3600) ~/ 60;
+      final int seconds = totalSeconds % 60;
 
-    if (english!) {
+      if (english!) {
+        return hours > 0
+            ? "$hours hr ${minutes.toString().padLeft(2, '0')} min"
+            : "$minutes min ${seconds.toString().padLeft(2, '0')} sec";
+      }
+
       return hours > 0
-          ? "$hours hr ${minutes.toString().padLeft(2, '0')} min"
-          : "$minutes min ${seconds.toString().padLeft(2, '0')} sec";
+          ? "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}"
+          : "$minutes:${seconds.toString().padLeft(2, '0')}";
+    }catch (_) {
+      return "";
     }
-
-    return hours > 0
-        ? "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}"
-        : "$minutes:${seconds.toString().padLeft(2, '0')}";
   }
 }

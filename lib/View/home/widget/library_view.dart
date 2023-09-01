@@ -44,7 +44,7 @@ class LibraryView extends StatelessWidget {
             ),
             ListToGridAnimation(
                 child: items.isEmpty
-                    ? LoadingShimmer(height: 184.h, width: 160.w)
+                    ? LoadingShimmer(height: 154.h, width: 160.w)
                     : condition
                         ? LibraryItemCarousel(
                             key: UniqueKey(),

@@ -17,7 +17,8 @@ class RecentLibraryItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() => LibraryView(
-        items: homeController.recentLibraryItems,
+        // ignore: invalid_use_of_protected_member
+        items: homeController.recentLibraryItems.value,
         condition: homeController.recentLibraryItemsGridView.value,
         onGridButtonPressed: _onGridButtonPressed,
         title: "Recently Added"));
