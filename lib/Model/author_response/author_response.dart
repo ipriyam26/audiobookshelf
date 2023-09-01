@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
+import 'package:audiobookshelf/Model/recent_series_response/series.dart';
 import 'package:collection/collection.dart';
 
 class Author {
-  String? id;
+  String id;
   dynamic asin;
   String? name;
   dynamic description;
@@ -12,9 +13,10 @@ class Author {
   int? addedAt;
   int? updatedAt;
   List<LibraryItem>? libraryItems;
+  List<Series>? series;
 
   Author({
-    this.id,
+    required this.id,
     this.asin,
     this.name,
     this.description,
@@ -22,6 +24,7 @@ class Author {
     this.addedAt,
     this.updatedAt,
     this.libraryItems,
+    this.series,
   });
 
   @override
@@ -29,9 +32,12 @@ class Author {
     return 'AuthorResponse(id: $id, asin: $asin, name: $name, description: $description, imagePath: $imagePath, addedAt: $addedAt, updatedAt: $updatedAt, libraryItems: $libraryItems)';
   }
 
+  factory Author.empty() {
+    return Author(id: "");
+  }
   factory Author.fromMap(Map<String, dynamic> data) {
     return Author(
-      id: data['id'] as String?,
+      id: data['id'] as String,
       asin: data['asin'] as dynamic,
       name: data['name'] as String?,
       description: data['description'] as dynamic,
@@ -40,6 +46,9 @@ class Author {
       updatedAt: data['updatedAt'] as int?,
       libraryItems: (data['libraryItems'] as List<dynamic>?)
           ?.map((e) => LibraryItem.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      series: (data['series'] as List<dynamic>?)
+          ?.map((e) => Series.fromMap(e as Map<String, dynamic>))
           .toList(),
     );
   }
@@ -53,6 +62,7 @@ class Author {
         'addedAt': addedAt,
         'updatedAt': updatedAt,
         'libraryItems': libraryItems?.map((e) => e.toMap()).toList(),
+        'series': series?.map((e) => e.toMap()).toList(),
       };
 
   /// `dart:convert`
@@ -85,4 +95,9 @@ class Author {
       addedAt.hashCode ^
       updatedAt.hashCode ^
       libraryItems.hashCode;
+  String get authorName => name ?? "Unknown";
+
+  String getAuthorUrl(String server, String token) {
+    return "$server/api/authors/$id/cover?token=$token";
+  }
 }

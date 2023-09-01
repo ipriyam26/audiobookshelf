@@ -17,14 +17,15 @@ class HomeController extends GetxController {
   RxList<Series> recentSeries = <Series>[].obs;
   RxList<Author> recentAuthors = <Author>[].obs;
   ApiService apiService = ApiService();
+  RxBool continueListeningGridView = false.obs;
+  RxBool recentLibraryItemsGridView = false.obs;
+  RxBool recentSeriesGridView = false.obs;
+  RxBool recentAuthorsGridView = false.obs;
+
   @override
   onReady() async {
     super.onReady();
-    getSortedMediaProgressItem().then((result) {
-      if (result != null) {
-        mediaProgressionItems.value = result;
-      }
-    });
+    mediaProgressionItems.value = await getSortedMediaProgressItem() ?? [];
     recentLibraryItems.value = await getRecentlyAddedLibraryItems() ?? [];
     recentSeries.value = await getRecentlyAddedSeries() ?? [];
     recentAuthors.value = await getRecentAuthors() ?? [];
@@ -39,7 +40,7 @@ class HomeController extends GetxController {
   }
 
   String getAuthorUrl(String authorID, int? updatedAt) {
-    return "${userController.server.value}/api/authors/$authorID/image?token=${userController.currentUser.value.token}&ts=$updatedAt";
+    return "${userController.server.value}/api/authors/$authorID/image?token=${userController.currentUser.value.token}";
   }
 
   String getCoverUrl(String libraryItemId) {
@@ -56,7 +57,7 @@ class HomeController extends GetxController {
     authors = authors.toSet().toList();
     List<Author> fAuthor = [];
     var param = {
-      'include': 'items',
+      'include': 'items,series',
     };
     for (var author in authors) {
       var response = await apiService.authenticatedGet("/api/authors/$author",
@@ -133,7 +134,7 @@ class HomeController extends GetxController {
           await userController.getLibraryItemBatch(mediaProgressLibIds);
       if (libItems != null) {
         for (var element in libItems) {
-          element.mediaProgress = mediaProgressMap[element.id!];
+          element.mediaProgress = mediaProgressMap[element.id];
         }
         return libItems;
       }

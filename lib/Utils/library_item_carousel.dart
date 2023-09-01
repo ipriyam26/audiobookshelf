@@ -8,25 +8,45 @@ class LibraryItemCarousel extends StatelessWidget {
     super.key,
     required this.items,
     this.showProgress = false,
+    this.displayAuthor = true,
+    this.gridView = false,
   });
+  final bool gridView;
 
   final List<LibraryItem> items;
   final bool showProgress;
-
+  final bool displayAuthor;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 184.h,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            child:
-                LibraryItemCard(item: items[index], showProgress: showProgress),
+    return gridView
+        ? Wrap(
+            children: items
+                .map((LibraryItem item) => Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+                      child: LibraryItemCard(
+                        item: item,
+                        showProgress: showProgress,
+                        displayAuthor: displayAuthor,
+                      ),
+                    ))
+                .toList())
+        : SizedBox(
+            height: displayAuthor ? 184.h : 170.h,
+            child: ListView.builder(
+              itemCount: items.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8.w),
+                  child: LibraryItemCard(
+                    item: items[index],
+                    showProgress: showProgress,
+                    displayAuthor: displayAuthor,
+                  ),
+                );
+              },
+            ),
           );
-        },
-      ),
-    );
   }
 }

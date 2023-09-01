@@ -35,8 +35,8 @@ class Series {
         nameIgnorePrefix: data['nameIgnorePrefix'] as String?,
         nameIgnorePrefixSort: data['nameIgnorePrefixSort'] as String?,
         type: data['type'] as String?,
-        books: (data['books'] as List<dynamic>?)
-            !.map((e) => LibraryItem.fromMap(e as Map<String, dynamic>))
+        books: ((data['books'] as List<dynamic>?) ?? [])
+            .map((e) => LibraryItem.fromMap(e as Map<String, dynamic>))
             .toList(),
         addedAt: data['addedAt'] as int?,
         totalDuration: (data['totalDuration'] as num?)?.toDouble(),
@@ -52,6 +52,28 @@ class Series {
         'addedAt': addedAt,
         'totalDuration': totalDuration,
       };
+//make a copy with method
+  Series copyWith({
+    String? id,
+    String? name,
+    String? nameIgnorePrefix,
+    String? nameIgnorePrefixSort,
+    String? type,
+    List<LibraryItem>? books,
+    int? addedAt,
+    double? totalDuration,
+  }) {
+    return Series(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      nameIgnorePrefix: nameIgnorePrefix ?? this.nameIgnorePrefix,
+      nameIgnorePrefixSort: nameIgnorePrefixSort ?? this.nameIgnorePrefixSort,
+      type: type ?? this.type,
+      books: books ?? this.books,
+      addedAt: addedAt ?? this.addedAt,
+      totalDuration: totalDuration ?? this.totalDuration,
+    );
+  }
 
   /// `dart:convert`
   ///

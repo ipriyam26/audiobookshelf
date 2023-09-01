@@ -11,8 +11,12 @@ class LibraryItemCard extends StatelessWidget {
   // final int idx;
   final bool showProgress;
   final LibraryItem item;
-  LibraryItemCard({super.key, required this.showProgress, required this.item});
-  final homeController = Get.find<HomeController>();
+  final bool displayAuthor;
+  const LibraryItemCard(
+      {super.key,
+      required this.showProgress,
+      required this.item,
+      required this.displayAuthor});
   @override
   Widget build(BuildContext context) {
     return LibraryItemProvider(
@@ -24,10 +28,13 @@ class LibraryItemCard extends StatelessWidget {
             transition: Transition.cupertino,
           );
         },
-        child: SizedBox(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.w),
+          ),
           width: 144.h,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Material(
@@ -37,7 +44,10 @@ class LibraryItemCard extends StatelessWidget {
                   child: ImageNProgress(showProgress: showProgress),
                 ),
               ),
-              const TitleNAuthor()
+              SizedBox(height: 8.h),
+              TitleNAuthor(
+                displayAuthor: displayAuthor,
+              )
             ],
           ),
         ),
@@ -81,7 +91,7 @@ class ImageNProgress extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CachedNetworkImage(
-          imageUrl: homeController.getCoverUrl(item.id!),
+          imageUrl: homeController.getCoverUrl(item.id),
           height: 140.h,
           width: 144.h,
           fit: BoxFit.fitWidth,
@@ -123,7 +133,8 @@ class ProgressBar extends StatelessWidget {
 }
 
 class TitleNAuthor extends StatelessWidget {
-  const TitleNAuthor({super.key});
+  const TitleNAuthor({super.key, required this.displayAuthor});
+  final bool displayAuthor;
 
   @override
   Widget build(BuildContext context) {
@@ -137,13 +148,18 @@ class TitleNAuthor extends StatelessWidget {
             style: Get.theme.textTheme.titleMedium,
             maxLines: 1,
             overflow: TextOverflow.ellipsis),
+        if (displayAuthor)
+          Column(
+            children: [
+              Text(
+                homeController.getAuthor(item),
+                style: Get.theme.textTheme.titleSmall!
+                    .copyWith(color: Get.theme.colorScheme.outline),
+              ),
+            ],
+          ),
         SizedBox(
           height: 4.h,
-        ),
-        Text(
-          homeController.getAuthor(item),
-          style: Get.theme.textTheme.titleSmall!
-              .copyWith(color: Get.theme.colorScheme.outline),
         ),
       ],
     );
