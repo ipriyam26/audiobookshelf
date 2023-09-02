@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
+// import 'package:shimmer/shimmer.dart';
 
 class SeriesItemCarousel extends StatelessWidget {
   SeriesItemCarousel({
@@ -34,7 +34,7 @@ class SeriesItemCarousel extends StatelessWidget {
                     ))
                 .toList())
         : SizedBox(
-            height: displayAuthor ? 184.h : 164.h,
+            height: displayAuthor ? 200.h : 180.h,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
@@ -68,39 +68,46 @@ class SeriesItem extends StatelessWidget {
           transition: Transition.cupertino,
         );
       },
-      child: Column(
-        // mainAxisAlignment: Main,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          BookStack(
-              images: item.books
-                  .map((book) => homeController.getCoverUrl(book.id))
-                  .toList()),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(item.name ?? "",
-                  style: Get.theme.textTheme.titleLarge!
-                      .copyWith(fontWeight: FontWeight.w400),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
-              if (displayAuthor)
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 4.h,
-                    ),
-                    Text(
-                      item.books[0].media.metadata.authorName ?? "",
-                      style: Get.theme.textTheme.titleSmall!
-                          .copyWith(color: Get.theme.colorScheme.outline),
-                    ),
-                  ],
-                ),
-            ],
-          )
-        ],
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 8.h),
+        height: displayAuthor ? 184.h : 164.h,
+        width: 320.w,
+        child: Column(
+          // mainAxisAlignment: Main,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (item.books.isNotEmpty)
+              BookStack(
+                  images: item.books
+                      .map((book) => homeController.getCoverUrl(book.id))
+                      .toList()),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(item.name ?? "",
+                    style: Get.theme.textTheme.titleLarge!
+                        .copyWith(fontWeight: FontWeight.w400),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
+                if (displayAuthor)
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: 4.h,
+                      ),
+                      Text(
+                        item.books[0].media.metadata.authorName ?? "",
+                        style: Get.theme.textTheme.titleSmall!
+                            .copyWith(color: Get.theme.colorScheme.outline),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -114,7 +121,8 @@ class BookStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = 320.w;
-    double overlap = (width - 140.h) / (images.length - 1);
+    double overlap =
+        images.length > 1 ? (width - 140.h) / (images.length - 1) : 0;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10.w),
@@ -122,38 +130,40 @@ class BookStack extends StatelessWidget {
       width: width,
       child: Card(
         elevation: 10,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(4.r),
-          child: Stack(
-            children: [
-              for (int i = 0; i < images.length; i++)
-                Positioned(
-                  left: i * overlap,
-                  child: CachedNetworkImage(
-                    imageUrl: images[i],
-                    height: 140.h,
-                    width: 144.h,
-                    fit: BoxFit.fitWidth,
-                    placeholder: (context, url) => Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
+        // shape: RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.circular(10.r),
+        // ),
+        child: images.length == 1
+            ? CachedNetworkImage(
+                imageUrl: images[0],
+                fit: BoxFit.cover,
+              )
+            : Stack(
+                children: [
+                  for (int i = 0; i < images.length; i++)
+                    Positioned(
+                      left: i * overlap,
+                      child: CachedNetworkImage(
+                        imageUrl: images[i],
                         height: 140.h,
                         width: 144.h,
-                        color: Colors.white,
+                        fit: BoxFit.fitWidth,
+                        placeholder: (context, url) => Container(
+                          height: 140.h,
+                          width: 144.h,
+                          color: Colors.white,
+                        ),
+                        errorWidget: (context, url, error) => Image.asset(
+                          "assets/book_placeholder.jpg",
+                          height: 140.h,
+                          width: 144.h,
+                          fit: BoxFit.fitWidth,
+                        ),
                       ),
                     ),
-                    errorWidget: (context, url, error) => Image.asset(
-                      "assets/book_placeholder.jpg",
-                      height: 140.h,
-                      width: 144.h,
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
+                ],
+              ),
+
         // margin: EdgeInsets.symmetric(horizontal: 10.w),
       ),
     );

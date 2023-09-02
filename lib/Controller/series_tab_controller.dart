@@ -1,25 +1,22 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/Controller/user_controller.dart';
-import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
-import 'package:audiobookshelf/Model/library_items_response/library_items_result.dart';
+import 'package:audiobookshelf/Model/recent_series_response/recent_series_response.dart';
+import 'package:audiobookshelf/Model/recent_series_response/series.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
 import 'package:audiobookshelf/Utils/filter.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-//enum for filtering items based on title, publishyear, Author name, updated, added,
-
-class BookTabController extends GetxController {
-  var items = <LibraryItem>[].obs;
+class SeriesTabController extends GetxController {
   var isLoading = false.obs;
-  final _pageSize = 20;
+  final _pageSize = 10;
   int currentPage = 0;
-  RxBool isGridView = false.obs;
+  RxBool isGridView = true.obs;
 
-  Rx<SortLibraryItem> sort = SortLibraryItem.updated.obs;
+  Rx<SortSeriesItem> sort = SortSeriesItem.addedAt.obs;
   RxBool desc = true.obs;
   final ApiService apiService = ApiService();
-  final PagingController<int, LibraryItem> pagingController =
+  final PagingController<int, Series> pagingController =
       PagingController(firstPageKey: 0);
   @override
   void onReady() {
@@ -32,7 +29,8 @@ class BookTabController extends GetxController {
 
   HomeController homeController = Get.find();
   UserController userController = Get.find();
-  void updateSortAndRefresh(SortLibraryItem newSort) {
+
+  void updateSortAndRefresh(SortSeriesItem newSort) {
     sort.value = newSort; // Update the sort variable
     currentPage = 0; // Reset the pagination counter
     pagingController.refresh(); // Clear the existing items and refresh
@@ -54,26 +52,27 @@ class BookTabController extends GetxController {
     };
 
     try {
-      final newItems = await apiService.authenticatedGet(
-          "/api/libraries/${homeController.dropdownValue.value.id}/items",
+      var response = await apiService.authenticatedGet(
+          '/api/libraries/${homeController.dropdownValue.value.id}/series',
           queryParameters: queryParams);
-      final libraryResponse = LibraryItemsResult.fromMap(newItems);
-      final libraryItems = libraryResponse.results;
-      final isLastPage = libraryItems!.length < _pageSize;
+
+      final seriesResponse = RecentSeriesResponse.fromMap(response);
+      final seriesItems = seriesResponse.results;
+      final isLastPage = seriesItems!.length < _pageSize;
       if (isLastPage) {
-        pagingController.appendLastPage(libraryItems);
+        pagingController.appendLastPage(seriesItems);
       } else {
-        final nextPageKey = pageKey + newItems.length;
+        final nextPageKey = pageKey + seriesItems.length;
         currentPage += 1;
-        pagingController.appendPage(libraryItems, nextPageKey);
+        pagingController.appendPage(seriesItems, nextPageKey);
       }
     } catch (error) {
       pagingController.error = error;
     }
   }
 
-  String getCoverUrl(LibraryItem item) {
-    return item.getCoverUrl(
-        userController.server.value, userController.currentUser.value.token!);
-  }
+  // String getCoverUrl(LibraryItem item) {
+  //   return item.getCoverUrl(
+  //       userController.server.value, userController.currentUser.value.token!);
+  // }
 }

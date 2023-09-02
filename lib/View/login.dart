@@ -159,7 +159,7 @@ class AddUser extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  height: 96.h,
+                  height: 108.h,
                   margin: EdgeInsets.symmetric(vertical: 16.h),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

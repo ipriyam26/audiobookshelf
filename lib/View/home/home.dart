@@ -1,6 +1,7 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/View/home/tabs/books.dart';
 import 'package:audiobookshelf/View/home/tabs/home.dart';
+import 'package:audiobookshelf/View/home/tabs/series.dart';
 import 'package:audiobookshelf/View/home/widget/drop_down_list.dart';
 import 'package:audiobookshelf/View/home/widget/end_drawer.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +96,8 @@ class HomeScreen extends StatelessWidget {
             HomeTab(),
 
             BookTab(),
-            const Icon(Icons.book, size: 350),
+            // const Icon(Icons.book, size: 350),
+            SeriesTab(),
             const Icon(Icons.shelves, size: 350),
             const Icon(Icons.directions_car, size: 350),
           ],
