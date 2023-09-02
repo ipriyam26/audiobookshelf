@@ -29,6 +29,9 @@ class SeriesTabController extends GetxController {
 
   HomeController homeController = Get.find();
   UserController userController = Get.find();
+  List<String> getCoverUrl(Series item) {
+    return item.books.map((e) => homeController.getCoverUrl(e.id)).toList();
+  }
 
   void updateSortAndRefresh(SortSeriesItem newSort) {
     sort.value = newSort; // Update the sort variable

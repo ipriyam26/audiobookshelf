@@ -107,4 +107,6 @@ class Series {
       totalDuration.hashCode;
 
   String get nameCount => "$name (${(books).length})";
+  String get authorName => books.first.authorName;
+  String get title => name ?? "";
 }

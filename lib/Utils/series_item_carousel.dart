@@ -1,5 +1,6 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/Model/recent_series_response/series.dart';
+import 'package:audiobookshelf/Utils/book_stack.dart';
 import 'package:audiobookshelf/View/series.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class SeriesItem extends StatelessWidget {
         );
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 8.h),
+        margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
         height: displayAuthor ? 184.h : 164.h,
         width: 320.w,
         child: Column(
@@ -108,63 +109,6 @@ class SeriesItem extends StatelessWidget {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class BookStack extends StatelessWidget {
-  // Add paths to your book images
-  final List<String> images;
-
-  const BookStack({super.key, required this.images});
-  @override
-  Widget build(BuildContext context) {
-    double width = 320.w;
-    double overlap =
-        images.length > 1 ? (width - 140.h) / (images.length - 1) : 0;
-
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10.w),
-      height: 140.h,
-      width: width,
-      child: Card(
-        elevation: 10,
-        // shape: RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.circular(10.r),
-        // ),
-        child: images.length == 1
-            ? CachedNetworkImage(
-                imageUrl: images[0],
-                fit: BoxFit.cover,
-              )
-            : Stack(
-                children: [
-                  for (int i = 0; i < images.length; i++)
-                    Positioned(
-                      left: i * overlap,
-                      child: CachedNetworkImage(
-                        imageUrl: images[i],
-                        height: 140.h,
-                        width: 144.h,
-                        fit: BoxFit.fitWidth,
-                        placeholder: (context, url) => Container(
-                          height: 140.h,
-                          width: 144.h,
-                          color: Colors.white,
-                        ),
-                        errorWidget: (context, url, error) => Image.asset(
-                          "assets/book_placeholder.jpg",
-                          height: 140.h,
-                          width: 144.h,
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-
-        // margin: EdgeInsets.symmetric(horizontal: 10.w),
       ),
     );
   }
