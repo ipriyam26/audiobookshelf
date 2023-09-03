@@ -60,6 +60,7 @@ class BookTabController extends GetxController {
       final libraryResponse = LibraryItemsResult.fromMap(newItems);
       final libraryItems = libraryResponse.results;
       final isLastPage = libraryItems!.length < _pageSize;
+      print(libraryItems);
       if (isLastPage) {
         pagingController.appendLastPage(libraryItems);
       } else {

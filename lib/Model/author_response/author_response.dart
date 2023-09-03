@@ -107,6 +107,6 @@ class Author {
   String get authorName => name;
   int get bookCount => numBooks ?? libraryItems.length;
   String getAuthorUrl(String server, String token) {
-    return "$server/api/authors/$id/cover?token=$token";
+    return "$server/api/authors/$id/image";
   }
 }

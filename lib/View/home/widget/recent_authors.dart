@@ -1,12 +1,15 @@
+import 'package:audiobookshelf/Controller/author_controller.dart';
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/author_response/author_response.dart';
 import 'package:audiobookshelf/Utils/animation.dart';
 import 'package:audiobookshelf/Utils/loading.dart';
 import 'package:audiobookshelf/View/author.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
 class RecentAuthors extends StatelessWidget {
   RecentAuthors({
@@ -105,12 +108,13 @@ class AuthorItemCarousel extends StatelessWidget {
 }
 
 class AuthorItem extends StatelessWidget {
-  const AuthorItem({
+  AuthorItem({
     super.key,
     required this.item,
   });
 
   final Author item;
+  final UserController userController = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +132,31 @@ class AuthorItem extends StatelessWidget {
           color: Colors.black54,
           elevation: 10,
           child: Stack(alignment: Alignment.bottomCenter, children: [
-            Image.asset(
-              "assets/human.png",
-              height: 140.h,
+            CachedNetworkImage(
               width: 130.w,
+              height: 140.h,
               fit: BoxFit.cover,
-              color: Get.theme.colorScheme.outline,
+              httpHeaders: {
+                "Authorization":
+                    "Bearer ${userController.currentUser.value.token}"
+              },
+              imageUrl: item.getAuthorUrl(userController.server.value,
+                  userController.currentUser.value.token!),
+              placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  height: 140.h,
+                  width: Get.width,
+                  color: Colors.white,
+                ),
+              ),
+              errorWidget: (context, url, error) => Image.asset(
+                "assets/human.png",
+                width: 130.w,
+                fit: BoxFit.cover,
+                color: Get.theme.colorScheme.outline,
+              ),
             ),
             Container(
               width: 130.w,
@@ -146,6 +169,7 @@ class AuthorItem extends StatelessWidget {
                   Text(
                     item.name,
                     style: Get.theme.textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text("${item.bookCount} Books")
                 ],

@@ -64,6 +64,8 @@ class HomeController extends GetxController {
       var response = await apiService.authenticatedGet("/api/authors/$author",
           queryParameters: param);
       final tAuthor = Author.fromMap(response);
+      print("request made: /api/authors/$author");
+      print("Recieved author ${tAuthor.name}");
       fAuthor.add(tAuthor);
     }
     // print(fAuthor);

@@ -131,6 +131,10 @@ class AuthorImage extends StatelessWidget {
       color: Colors.transparent,
       child: CachedNetworkImage(
         width: Get.width,
+        httpHeaders: {
+          "Authorization":
+              "Bearer ${controller.userController.currentUser.value.token}"
+        },
         imageUrl: controller.getAuthorImageUrl(),
         placeholder: (context, url) => Shimmer.fromColors(
           baseColor: Colors.grey[300]!,

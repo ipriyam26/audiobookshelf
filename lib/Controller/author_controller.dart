@@ -23,21 +23,29 @@ class AuthorController extends GetxController {
 
   @override
   Future<void> onReady() async {
-    item.value = await getAuthor();
-    series.value = await getSeries() ?? [];
     super.onReady();
+    item.value = await getAuthor();
+    print("got updated author");
+    series.value = await getSeries() ?? [];
+    print("Done Recieveing series");
   }
 
   Future<Author> getAuthor() async {
     final query = {
       'include': 'items,series',
     };
-
-    final response = await apiService.authenticatedGet(
-        '/api/authors/${item.value.id}',
-        queryParameters: query);
-    final author = Author.fromMap(response);
-    return author;
+    try {
+      final response = await apiService.authenticatedGet(
+          '/api/authors/${item.value.id}',
+          queryParameters: query);
+      final author = Author.fromMap(response);
+      return author;
+    } catch (e) {
+      print("Error fetching author know as ${item.value.name}");
+      print("Request was /api/authors/${item.value.id}");
+      print(e);
+      return Author.empty();
+    }
   }
 
   Future<List<Series>?> getSeries() async {
@@ -45,18 +53,25 @@ class AuthorController extends GetxController {
     // List<String> seriesIds = [];
     List<Series> series = [];
     for (Series seriesItem in item.value.series) {
-      var response = await apiService.authenticatedGet(
-          '/api/series/${seriesItem.id}',
-          queryParameters: query);
-      final List<dynamic> tempSeriesIds =
-          response['progress']['libraryItemIds'];
-      final List<String> seriesIds =
-          tempSeriesIds.map((e) => e.toString()).toList();
+      try {
+        var response = await apiService.authenticatedGet(
+            '/api/series/${seriesItem.id}',
+            queryParameters: query);
+        final List<dynamic> tempSeriesIds =
+            response['progress']['libraryItemIds'];
+        final List<String> seriesIds =
+            tempSeriesIds.map((e) => e.toString()).toList();
 
-      List<LibraryItem>? libraryItems = await userController
-          .getLibraryItemBatch(seriesIds); // Get the library items from the ids
-      Series newSeries = seriesItem.copyWith(books: libraryItems);
-      series.add(newSeries);
+        List<LibraryItem>? libraryItems =
+            await userController.getLibraryItemBatch(
+                seriesIds); // Get the library items from the ids
+        Series newSeries = seriesItem.copyWith(books: libraryItems);
+        series.add(newSeries);
+      } catch (e) {
+        print("Error fetching series know as ${seriesItem.name}");
+        print(e);
+        continue;
+      }
     }
     return series;
   }
