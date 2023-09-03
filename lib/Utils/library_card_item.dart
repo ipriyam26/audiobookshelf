@@ -37,12 +37,9 @@ class LibraryItemCard extends StatelessWidget {
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Material(
-                elevation: 16.r,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4.w),
-                  child: ImageNProgress(showProgress: showProgress),
-                ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4.w),
+                child: ImageNProgress(showProgress: showProgress),
               ),
               SizedBox(height: 8.h),
               TitleNAuthor(

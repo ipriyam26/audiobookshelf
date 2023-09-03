@@ -1,22 +1,16 @@
-import 'package:audiobookshelf/Controller/home_controller.dart';
-import 'package:audiobookshelf/Controller/seriestab_controller.dart';
-import 'package:audiobookshelf/Controller/user_controller.dart';
-import 'package:audiobookshelf/Model/collection_response/group_item.dart';
+import 'package:audiobookshelf/Controller/authortab_controller.dart';
 import 'package:audiobookshelf/Utils/animation.dart';
 import 'package:audiobookshelf/Utils/filter.dart';
-import 'package:audiobookshelf/Utils/list_view_grouped.dart';
-import 'package:audiobookshelf/Utils/grouped_item.dart';
+import 'package:audiobookshelf/View/home/widget/recent_authors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class SeriesTab extends StatelessWidget {
-  SeriesTab({super.key});
-  final SeriesTabController seriesTabController =
-      Get.put(SeriesTabController());
-  final HomeController homeController = Get.find();
-  final UserController userController = Get.find();
+class AuthorTab extends StatelessWidget {
+  AuthorTab({super.key});
+
+  // final HomeController homeController = Get.find<HomeController>();
+  final AuthorTabController controller = Get.put(AuthorTabController());
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -29,7 +23,7 @@ class SeriesTab extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Series",
+                  "Authors",
                   style: Get.textTheme.titleLarge,
                 ),
                 // FilterItems(),
@@ -37,25 +31,25 @@ class SeriesTab extends StatelessWidget {
                   children: [
                     IconButton(
                         onPressed: () {
-                          seriesTabController.updateOrderAndRefresh();
+                          controller.desc.value = !controller.desc.value;
                         },
                         icon: Obx(
-                          () => seriesTabController.desc.value
+                          () => controller.desc.value
                               ? const Icon(Icons.keyboard_arrow_down)
                               : const Icon(Icons.keyboard_arrow_up_sharp),
                         )),
                     Stack(
                       children: [
-                        PopupMenuButton<SortSeriesItem>(
+                        PopupMenuButton<SortAuthorItem>(
                           icon: const Icon(Icons.sort),
-                          onSelected: (SortSeriesItem result) {
-                            seriesTabController.updateSortAndRefresh(result);
+                          onSelected: (SortAuthorItem result) {
+                            controller.sort.value = result;
                           },
                           itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<SortSeriesItem>>[
-                            ...SortSeriesItem.values
+                              <PopupMenuEntry<SortAuthorItem>>[
+                            ...SortAuthorItem.values
                                 .map(
-                                  (filter) => PopupMenuItem<SortSeriesItem>(
+                                  (filter) => PopupMenuItem<SortAuthorItem>(
                                     value: filter,
                                     child: Text(filter.label),
                                   ),
@@ -73,7 +67,7 @@ class SeriesTab extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Text(
-                                    seriesTabController.sort.value.label
+                                    controller.sort.value.label
                                         .split("")[0]
                                         .toUpperCase(),
                                     style: Get.textTheme.labelSmall!.copyWith(
@@ -85,11 +79,11 @@ class SeriesTab extends StatelessWidget {
                     ),
                     Obx(() => IconButton(
                         onPressed: () {
-                          seriesTabController.isGridView.value =
-                              !seriesTabController.isGridView.value;
+                          controller.isGridView.value =
+                              !controller.isGridView.value;
                         },
                         icon: IconAnimation(
-                            condition: seriesTabController.isGridView.value))),
+                            condition: controller.isGridView.value))),
                   ],
                 )
               ],
@@ -98,20 +92,30 @@ class SeriesTab extends StatelessWidget {
           Expanded(
               flex: 1,
               child: Obx(() => ListToGridAnimation(
-                    child: !seriesTabController.isGridView.value
-                        ? PagedListView(
-                            pagingController:
-                                seriesTabController.pagingController,
-                            builderDelegate:
-                                PagedChildBuilderDelegate<GroupedItems>(
-                              itemBuilder: (context, item, index) => Container(
-                                margin: EdgeInsets.symmetric(vertical: 10.h),
-                                child: GroupedItemView(
-                                    item: item, displayAuthor: true),
-                              ),
-                            ))
-                        : ListViewGrouped(
-                            controller: seriesTabController,
+                    child: controller.isGridView.value
+                        ? GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent:
+                                  200.w, // Set the maximum width for items
+                              mainAxisSpacing:
+                                  4.0, // Spacing along the main axis
+                              crossAxisSpacing:
+                                  4.0, // Spacing along the cross axis
+                            ),
+                            itemBuilder: (BuildContext context, int index) {
+                              // Your builder function here
+                              return AuthorItem(
+                                  item: controller.authors[index]);
+                            },
+                            itemCount: controller.authors.length,
+                          )
+                        : ListView.builder(
+                            itemCount: controller.authors.length,
+                            itemBuilder: (context, index) {
+                              return AuthorItem(
+                                  item: controller.authors[index]);
+                            },
                           ),
                   )))
         ],

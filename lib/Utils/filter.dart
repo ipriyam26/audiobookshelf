@@ -7,15 +7,49 @@ enum SortLibraryItem {
 }
 
 enum SortSeriesItem {
-  numOkBooks,
+  numOfBooks,
   duration,
   addedAt,
+}
+
+enum SortAuthorItem {
+  name,
+  addedAt,
+  numOfBooks,
+}
+
+extension SortAuthorItemExtension on SortAuthorItem {
+  String get query {
+    switch (this) {
+      case SortAuthorItem.addedAt:
+        return 'addedAt';
+      case SortAuthorItem.name:
+        return 'name';
+      case SortAuthorItem.numOfBooks:
+        return 'numBooks';
+      default:
+        return 'addedAt';
+    }
+  }
+
+  String get label {
+    switch (this) {
+      case SortAuthorItem.addedAt:
+        return 'Added At';
+      case SortAuthorItem.name:
+        return 'Name';
+      case SortAuthorItem.numOfBooks:
+        return 'Number of Books';
+      default:
+        return 'Added At';
+    }
+  }
 }
 
 extension SortSeriesItemExtension on SortSeriesItem {
   String get query {
     switch (this) {
-      case SortSeriesItem.numOkBooks:
+      case SortSeriesItem.numOfBooks:
         return 'numBooks';
       case SortSeriesItem.duration:
         return 'totalDuration';
@@ -28,7 +62,7 @@ extension SortSeriesItemExtension on SortSeriesItem {
 
   String get label {
     switch (this) {
-      case SortSeriesItem.numOkBooks:
+      case SortSeriesItem.numOfBooks:
         return 'Number of Books';
       case SortSeriesItem.duration:
         return 'Total Duration';

@@ -7,22 +7,24 @@ import 'package:collection/collection.dart';
 class Author {
   String id;
   dynamic asin;
-  String? name;
+  String name;
   dynamic description;
   dynamic imagePath;
-  int? addedAt;
-  int? updatedAt;
+  int addedAt;
+  int updatedAt;
   List<LibraryItem>? libraryItems;
   List<Series>? series;
+  int? numBooks;
 
   Author({
     required this.id,
+    this.numBooks,
     this.asin,
-    this.name,
+    required this.name,
     this.description,
     this.imagePath,
-    this.addedAt,
-    this.updatedAt,
+    required this.addedAt,
+    required this.updatedAt,
     this.libraryItems,
     this.series,
   });
@@ -33,17 +35,18 @@ class Author {
   }
 
   factory Author.empty() {
-    return Author(id: "");
+    return Author(id: "", name: '', addedAt: 0, updatedAt: 0);
   }
   factory Author.fromMap(Map<String, dynamic> data) {
     return Author(
       id: data['id'] as String,
       asin: data['asin'] as dynamic,
-      name: data['name'] as String?,
+      name: data['name'] as String,
       description: data['description'] as dynamic,
       imagePath: data['imagePath'] as dynamic,
-      addedAt: data['addedAt'] as int?,
-      updatedAt: data['updatedAt'] as int?,
+      addedAt: data['addedAt'] as int,
+      updatedAt: data['updatedAt'] as int,
+      numBooks: data['numBooks'] as int?,
       libraryItems: (data['libraryItems'] as List<dynamic>?)
           ?.map((e) => LibraryItem.fromMap(e as Map<String, dynamic>))
           .toList(),
@@ -95,8 +98,8 @@ class Author {
       addedAt.hashCode ^
       updatedAt.hashCode ^
       libraryItems.hashCode;
-  String get authorName => name ?? "Unknown";
-
+  String get authorName => name;
+  int get bookCount => numBooks ?? (libraryItems ?? []).length;
   String getAuthorUrl(String server, String token) {
     return "$server/api/authors/$id/cover?token=$token";
   }

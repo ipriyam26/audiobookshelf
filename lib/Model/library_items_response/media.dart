@@ -137,7 +137,7 @@ class Media {
       return hours > 0
           ? "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}"
           : "$minutes:${seconds.toString().padLeft(2, '0')}";
-    }catch (_) {
+    } catch (_) {
       return "";
     }
   }

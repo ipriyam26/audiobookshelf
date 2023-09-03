@@ -1,25 +1,24 @@
 import 'dart:convert';
 
+import 'package:audiobookshelf/Model/collection_response/group_item.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:collection/collection.dart';
 
-class Series {
-  String? id;
-  String? name;
+class Series extends GroupedItems {
   String? nameIgnorePrefix;
   String? nameIgnorePrefixSort;
   String? type;
-  List<LibraryItem> books;
+
   int? addedAt;
   double? totalDuration;
 
   Series({
-    this.id,
-    this.name,
+    required super.id,
+    required super.name,
     this.nameIgnorePrefix,
     this.nameIgnorePrefixSort,
     this.type,
-    required this.books,
+    required super.books,
     this.addedAt,
     this.totalDuration,
   });
@@ -30,8 +29,8 @@ class Series {
   }
 
   factory Series.fromMap(Map<String, dynamic> data) => Series(
-        id: data['id'] as String?,
-        name: data['name'] as String?,
+        id: data['id'] as String,
+        name: data['name'] as String,
         nameIgnorePrefix: data['nameIgnorePrefix'] as String?,
         nameIgnorePrefixSort: data['nameIgnorePrefixSort'] as String?,
         type: data['type'] as String?,
@@ -105,8 +104,4 @@ class Series {
       books.hashCode ^
       addedAt.hashCode ^
       totalDuration.hashCode;
-
-  String get nameCount => "$name (${(books).length})";
-  String get authorName => books.first.authorName;
-  String get title => name ?? "";
 }

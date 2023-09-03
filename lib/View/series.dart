@@ -1,5 +1,5 @@
 import 'package:audiobookshelf/Controller/series_controller.dart';
-import 'package:audiobookshelf/Model/recent_series_response/series.dart';
+import 'package:audiobookshelf/Model/collection_response/group_item.dart';
 import 'package:audiobookshelf/View/home/widget/drop_down_list.dart';
 import 'package:audiobookshelf/View/home/widget/library_item_list_view.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-class SeriesView extends StatelessWidget {
-  const SeriesView({super.key, required this.item});
-  final Series item;
+class GroupedView extends StatelessWidget {
+  const GroupedView({super.key, required this.item});
+  final GroupedItems item;
 
   @override
   Widget build(BuildContext context) {

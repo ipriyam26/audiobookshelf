@@ -116,54 +116,64 @@ class AuthorView extends StatelessWidget {
               ],
             ),
           ),
-          if (item.libraryItems != null)
-            Column(
-              children: [
-                SizedBox(
-                  height: 20.h,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: 12.w, vertical: 12.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Recently Added",
-                              style: Get.theme.textTheme.titleLarge),
-
-                          //add transition when controller.bookGridView.value is changed
-
-                          Obx(() => IconButton(
-                              onPressed: () {
-                                controller.bookGridView.value =
-                                    !controller.bookGridView.value;
-                              },
-                              icon: IconAnimation(
-                                  condition: controller.bookGridView.value)))
-                        ],
+          Obx(() {
+            if (controller.item.value.libraryItems != null) {
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 12.w, vertical: 12.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Recently Added",
+                                style: Get.theme.textTheme.titleLarge),
+                            Obx(() => IconButton(
+                                onPressed: () {
+                                  controller.bookGridView.value =
+                                      !controller.bookGridView.value;
+                                },
+                                icon: IconAnimation(
+                                    condition: controller.bookGridView.value)))
+                          ],
+                        ),
                       ),
-                    ),
-                    if (item.libraryItems!.isNotEmpty)
-                      Obx(() => ListToGridAnimation(
-                          child: controller.bookGridView.value
-                              ? LibraryItemCarousel(
-                                  key: UniqueKey(),
-                                  items: item.libraryItems!,
-                                  displayAuthor: false,
-                                  gridView: true,
-                                )
-                              : LibraryItemCarousel(
-                                  key: UniqueKey(),
-                                  items: item.libraryItems!,
-                                  displayAuthor: false,
-                                )))
-                  ],
-                ),
-              ],
-            ),
+                      Obx(() {
+                        if (controller.item.value.libraryItems != null &&
+                            (controller.item.value.libraryItems ?? [])
+                                .isNotEmpty) {
+                          return ListToGridAnimation(
+                            child: controller.bookGridView.value
+                                ? LibraryItemCarousel(
+                                    key: UniqueKey(),
+                                    items: controller.item.value.libraryItems ??
+                                        [],
+                                    displayAuthor: false,
+                                    gridView: true,
+                                  )
+                                : LibraryItemCarousel(
+                                    key: UniqueKey(),
+                                    items: controller.item.value.libraryItems ??
+                                        [],
+                                    displayAuthor: false,
+                                  ),
+                          );
+                        }
+                        return Container();
+                      })
+                    ],
+                  ),
+                ],
+              );
+            }
+            return Container();
+          }),
           if (item.series != null && item.series!.isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,18 +189,23 @@ class AuthorView extends StatelessWidget {
                     children: [
                       Text("Recent Series",
                           style: Get.theme.textTheme.titleLarge),
-                      Obx(() => IconButton(
+                      Obx(
+                        () => IconButton(
                           onPressed: () {
                             controller.seriesGridView.value =
                                 !controller.seriesGridView.value;
                           },
                           icon: IconAnimation(
-                              condition: controller.seriesGridView.value)))
+                              condition: controller.seriesGridView.value),
+                        ),
+                      )
                     ],
                   ),
                 ),
                 Obx(() {
-                  return ListToGridAnimation(
+                  return Align(
+                    alignment: Alignment.center,
+                    child: ListToGridAnimation(
                       child: controller.series.isEmpty
                           ? LoadingShimmer(
                               key: UniqueKey(), height: 184.h, width: 320.w)
@@ -205,7 +220,9 @@ class AuthorView extends StatelessWidget {
                                   key: UniqueKey(),
                                   items: controller.series,
                                   displayAuthor: false,
-                                ));
+                                ),
+                    ),
+                  );
                 })
               ],
             )

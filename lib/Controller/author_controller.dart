@@ -11,7 +11,7 @@ class AuthorController extends GetxController {
   ApiService apiService = ApiService();
   RxBool bookGridView = false.obs;
   RxBool seriesGridView = false.obs;
-  
+
   AuthorController(Author author) {
     item.value = author;
   }
@@ -23,8 +23,21 @@ class AuthorController extends GetxController {
 
   @override
   Future<void> onReady() async {
+    item.value = await getAuthor();
     series.value = await getSeries() ?? [];
     super.onReady();
+  }
+
+  Future<Author> getAuthor() async {
+    final query = {
+      'include': 'items,series',
+    };
+
+    final response = await apiService.authenticatedGet(
+        '/api/authors/${item.value.id}',
+        queryParameters: query);
+    final author = Author.fromMap(response);
+    return author;
   }
 
   Future<List<Series>?> getSeries() async {

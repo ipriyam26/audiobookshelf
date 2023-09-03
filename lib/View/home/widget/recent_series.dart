@@ -38,23 +38,26 @@ class RecentSeries extends StatelessWidget {
           ),
         ),
         Obx(() {
-          return ListToGridAnimation(
-              child: controller.recentSeries.isEmpty
-                  ? LoadingShimmer(
-                      key: UniqueKey(), height: 184.h, width: 320.w)
-                  : controller.recentSeriesGridView.value
-                      ? SeriesItemCarousel(
-                          key: UniqueKey(),
-                          items: controller.recentSeries,
-                          displayAuthor: false,
-                          gridView: true,
-                        )
-                      : SeriesItemCarousel(
-                          key: UniqueKey(),
-                          items: controller.recentSeries,
-                          displayAuthor: false,
-                          gridView: false,
-                        ));
+          return Align(
+            alignment: Alignment.center,
+            child: ListToGridAnimation(
+                child: controller.recentSeries.isEmpty
+                    ? LoadingShimmer(
+                        key: UniqueKey(), height: 184.h, width: 320.w)
+                    : controller.recentSeriesGridView.value
+                        ? SeriesItemCarousel(
+                            key: UniqueKey(),
+                            items: controller.recentSeries,
+                            displayAuthor: true,
+                            gridView: true,
+                          )
+                        : SeriesItemCarousel(
+                            key: UniqueKey(),
+                            items: controller.recentSeries,
+                            displayAuthor: true,
+                            gridView: false,
+                          )),
+          );
         })
       ],
     );

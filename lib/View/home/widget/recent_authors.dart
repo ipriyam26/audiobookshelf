@@ -144,10 +144,10 @@ class AuthorItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    item.name!,
+                    item.name,
                     style: Get.theme.textTheme.titleMedium,
                   ),
-                  Text("${item.libraryItems!.length} Books")
+                  Text("${item.bookCount} Books")
                 ],
               ),
             ),

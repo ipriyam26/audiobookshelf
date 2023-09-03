@@ -1,9 +1,9 @@
 import 'package:audiobookshelf/Controller/user_controller.dart';
-import 'package:audiobookshelf/Model/recent_series_response/series.dart';
+import 'package:audiobookshelf/Model/collection_response/group_item.dart';
 import 'package:get/get.dart';
 
 class SeriesController extends GetxController {
-  final Series item;
+  final GroupedItems item;
   SeriesController({required this.item});
   final UserController userController = Get.find<UserController>();
   String getCoverUrl(int index) {
