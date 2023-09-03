@@ -63,171 +63,216 @@ class AuthorView extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          Material(
-            elevation: 10,
-            color: Colors.transparent,
-            child: CachedNetworkImage(
-              width: Get.width,
-              imageUrl: controller.getAuthorImageUrl(),
-              placeholder: (context, url) => Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  height: 300.h,
-                  width: Get.width,
-                  color: Colors.white,
-                ),
-              ),
-              errorWidget: (context, url, error) => Image.asset(
-                "assets/human.png",
-                width: Get.width,
-                fit: BoxFit.cover,
-                color: Get.theme.colorScheme.outline,
+          AuthorImage(controller: controller),
+          AuthorMetadata(item: item),
+          AuthorLibraryView(controller: controller),
+          AuthorSeriesView(controller: controller)
+        ],
+      ),
+    );
+  }
+}
+
+class AuthorMetadata extends StatelessWidget {
+  const AuthorMetadata({
+    super.key,
+    required this.item,
+  });
+
+  final Author item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 12.0.h, horizontal: 8.w),
+      child: Column(
+        children: [
+          Text(
+            item.authorName,
+            textAlign: TextAlign.center,
+            style: Get.theme.textTheme.headlineMedium!
+                .copyWith(fontWeight: FontWeight.w600),
+          ),
+          if (item.asin != null) Text(item.asin),
+          SizedBox(
+            height: 12.h,
+          ),
+          if (item.description != null)
+            ReadMoreText(
+              item.description,
+              style:
+                  Get.theme.textTheme.headlineSmall!.copyWith(fontSize: 16.sp),
+              trimLines: 5,
+              colorClickableText: Get.theme.colorScheme.primary,
+              trimMode: TrimMode.Line,
+              trimCollapsedText: 'Show more',
+              trimExpandedText: 'Show less',
+              // moreStyle:
+              // ,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class AuthorImage extends StatelessWidget {
+  const AuthorImage({
+    super.key,
+    required this.controller,
+  });
+
+  final AuthorController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      elevation: 10,
+      color: Colors.transparent,
+      child: CachedNetworkImage(
+        width: Get.width,
+        imageUrl: controller.getAuthorImageUrl(),
+        placeholder: (context, url) => Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            height: 300.h,
+            width: Get.width,
+            color: Colors.white,
+          ),
+        ),
+        errorWidget: (context, url, error) => Image.asset(
+          "assets/human.png",
+          width: Get.width,
+          fit: BoxFit.cover,
+          color: Get.theme.colorScheme.outline,
+        ),
+      ),
+    );
+  }
+}
+
+class AuthorLibraryView extends StatelessWidget {
+  const AuthorLibraryView({
+    super.key,
+    required this.controller,
+  });
+
+  final AuthorController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 20.h,
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Recently Added", style: Get.theme.textTheme.titleLarge),
+                  Obx(() => IconButton(
+                      onPressed: () {
+                        controller.bookGridView.value =
+                            !controller.bookGridView.value;
+                      },
+                      icon: IconAnimation(
+                          condition: controller.bookGridView.value)))
+                ],
               ),
             ),
+            Obx(() {
+              if (controller.item.value.libraryItems.isNotEmpty) {
+                return ListToGridAnimation(
+                  child: controller.bookGridView.value
+                      ? LibraryItemCarousel(
+                          key: UniqueKey(),
+                          items: controller.item.value.libraryItems,
+                          displayAuthor: false,
+                          gridView: true,
+                        )
+                      : LibraryItemCarousel(
+                          key: UniqueKey(),
+                          items: controller.item.value.libraryItems,
+                          displayAuthor: false,
+                        ),
+                );
+              }
+              return Container();
+            })
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class AuthorSeriesView extends StatelessWidget {
+  const AuthorSeriesView({
+    super.key,
+    required this.controller,
+  });
+
+  final AuthorController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    if (controller.item.value.series.isNotEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 20.h,
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 12.0.h, horizontal: 8.w),
-            child: Column(
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  item.authorName,
-                  textAlign: TextAlign.center,
-                  style: Get.theme.textTheme.headlineMedium!
-                      .copyWith(fontWeight: FontWeight.w600),
-                ),
-                if (item.asin != null) Text(item.asin),
-                SizedBox(
-                  height: 12.h,
-                ),
-                if (item.description != null)
-                  ReadMoreText(
-                    item.description,
-                    style: Get.theme.textTheme.headlineSmall!
-                        .copyWith(fontSize: 16.sp),
-                    trimLines: 5,
-                    colorClickableText: Get.theme.colorScheme.primary,
-                    trimMode: TrimMode.Line,
-                    trimCollapsedText: 'Show more',
-                    trimExpandedText: 'Show less',
-                    // moreStyle:
-                    // ,
+                Text("Recent Series", style: Get.theme.textTheme.titleLarge),
+                Obx(
+                  () => IconButton(
+                    onPressed: () {
+                      controller.seriesGridView.value =
+                          !controller.seriesGridView.value;
+                    },
+                    icon: IconAnimation(
+                        condition: controller.seriesGridView.value),
                   ),
+                )
               ],
             ),
           ),
           Obx(() {
-            if (controller.item.value.libraryItems != null) {
-              return Column(
-                children: [
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 12.w, vertical: 12.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Recently Added",
-                                style: Get.theme.textTheme.titleLarge),
-                            Obx(() => IconButton(
-                                onPressed: () {
-                                  controller.bookGridView.value =
-                                      !controller.bookGridView.value;
-                                },
-                                icon: IconAnimation(
-                                    condition: controller.bookGridView.value)))
-                          ],
-                        ),
-                      ),
-                      Obx(() {
-                        if (controller.item.value.libraryItems != null &&
-                            (controller.item.value.libraryItems ?? [])
-                                .isNotEmpty) {
-                          return ListToGridAnimation(
-                            child: controller.bookGridView.value
-                                ? LibraryItemCarousel(
-                                    key: UniqueKey(),
-                                    items: controller.item.value.libraryItems ??
-                                        [],
-                                    displayAuthor: false,
-                                    gridView: true,
-                                  )
-                                : LibraryItemCarousel(
-                                    key: UniqueKey(),
-                                    items: controller.item.value.libraryItems ??
-                                        [],
-                                    displayAuthor: false,
-                                  ),
-                          );
-                        }
-                        return Container();
-                      })
-                    ],
-                  ),
-                ],
-              );
-            }
-            return Container();
-          }),
-          if (item.series != null && item.series!.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 20.h,
-                ),
-                Container(
-                  margin:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Recent Series",
-                          style: Get.theme.textTheme.titleLarge),
-                      Obx(
-                        () => IconButton(
-                          onPressed: () {
-                            controller.seriesGridView.value =
-                                !controller.seriesGridView.value;
-                          },
-                          icon: IconAnimation(
-                              condition: controller.seriesGridView.value),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Obx(() {
-                  return Align(
-                    alignment: Alignment.center,
-                    child: ListToGridAnimation(
-                      child: controller.series.isEmpty
-                          ? LoadingShimmer(
-                              key: UniqueKey(), height: 184.h, width: 320.w)
-                          : controller.seriesGridView.value
-                              ? SeriesItemCarousel(
-                                  key: UniqueKey(),
-                                  items: controller.series,
-                                  displayAuthor: false,
-                                  gridView: true,
-                                )
-                              : SeriesItemCarousel(
-                                  key: UniqueKey(),
-                                  items: controller.series,
-                                  displayAuthor: false,
-                                ),
-                    ),
-                  );
-                })
-              ],
-            )
+            return Align(
+              alignment: Alignment.center,
+              child: ListToGridAnimation(
+                child: controller.series.isEmpty
+                    ? LoadingShimmer(
+                        key: UniqueKey(), height: 184.h, width: 320.w)
+                    : controller.seriesGridView.value
+                        ? SeriesItemCarousel(
+                            key: UniqueKey(),
+                            items: controller.series,
+                            displayAuthor: false,
+                            gridView: true,
+                          )
+                        : SeriesItemCarousel(
+                            key: UniqueKey(),
+                            items: controller.series,
+                            displayAuthor: false,
+                          ),
+              ),
+            );
+          })
         ],
-      ),
-    );
+      );
+    }
+    return Container();
   }
 }

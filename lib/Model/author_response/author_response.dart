@@ -12,8 +12,8 @@ class Author {
   dynamic imagePath;
   int addedAt;
   int updatedAt;
-  List<LibraryItem>? libraryItems;
-  List<Series>? series;
+  List<LibraryItem> libraryItems;
+  List<Series> series;
   int? numBooks;
 
   Author({
@@ -25,8 +25,8 @@ class Author {
     this.imagePath,
     required this.addedAt,
     required this.updatedAt,
-    this.libraryItems,
-    this.series,
+    required this.libraryItems,
+    required this.series,
   });
 
   @override
@@ -35,7 +35,13 @@ class Author {
   }
 
   factory Author.empty() {
-    return Author(id: "", name: '', addedAt: 0, updatedAt: 0);
+    return Author(
+        id: "",
+        name: '',
+        addedAt: 0,
+        updatedAt: 0,
+        series: [],
+        libraryItems: []);
   }
   factory Author.fromMap(Map<String, dynamic> data) {
     return Author(
@@ -47,11 +53,11 @@ class Author {
       addedAt: data['addedAt'] as int,
       updatedAt: data['updatedAt'] as int,
       numBooks: data['numBooks'] as int?,
-      libraryItems: (data['libraryItems'] as List<dynamic>?)
-          ?.map((e) => LibraryItem.fromMap(e as Map<String, dynamic>))
+      libraryItems: ((data['libraryItems'] as List<dynamic>?) ?? [])
+          .map((e) => LibraryItem.fromMap(e as Map<String, dynamic>))
           .toList(),
-      series: (data['series'] as List<dynamic>?)
-          ?.map((e) => Series.fromMap(e as Map<String, dynamic>))
+      series: ((data['series'] as List<dynamic>?) ?? [])
+          .map((e) => Series.fromMap(e as Map<String, dynamic>))
           .toList(),
     );
   }
@@ -64,8 +70,8 @@ class Author {
         'imagePath': imagePath,
         'addedAt': addedAt,
         'updatedAt': updatedAt,
-        'libraryItems': libraryItems?.map((e) => e.toMap()).toList(),
-        'series': series?.map((e) => e.toMap()).toList(),
+        'libraryItems': libraryItems.map((e) => e.toMap()).toList(),
+        'series': series.map((e) => e.toMap()).toList(),
       };
 
   /// `dart:convert`
@@ -99,7 +105,7 @@ class Author {
       updatedAt.hashCode ^
       libraryItems.hashCode;
   String get authorName => name;
-  int get bookCount => numBooks ?? (libraryItems ?? []).length;
+  int get bookCount => numBooks ?? libraryItems.length;
   String getAuthorUrl(String server, String token) {
     return "$server/api/authors/$id/cover?token=$token";
   }

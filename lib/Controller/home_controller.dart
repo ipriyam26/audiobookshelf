@@ -29,11 +29,12 @@ class HomeController extends GetxController {
     recentLibraryItems.value = await getRecentlyAddedLibraryItems() ?? [];
     recentSeries.value = await getRecentlyAddedSeries() ?? [];
     recentAuthors.value = await getRecentAuthors() ?? [];
+    print("All initialized");
     update();
   }
 
   HomeController() {
-    dropdownValue = Rx<Library>(userController.libraries[0]);
+    dropdownValue = Rx<Library>(userController.libraries.first);
     items.value = userController.libraries;
 
     update();

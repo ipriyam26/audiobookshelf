@@ -44,7 +44,7 @@ class AuthorController extends GetxController {
     final query = {'include': 'progress'};
     // List<String> seriesIds = [];
     List<Series> series = [];
-    for (Series seriesItem in item.value.series!) {
+    for (Series seriesItem in item.value.series) {
       var response = await apiService.authenticatedGet(
           '/api/series/${seriesItem.id}',
           queryParameters: query);
