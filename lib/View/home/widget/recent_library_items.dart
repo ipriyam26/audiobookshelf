@@ -9,18 +9,14 @@ class RecentLibraryItems extends StatelessWidget {
   });
 
   final HomeController homeController = Get.find<HomeController>();
-  void _onGridButtonPressed() {
-    homeController.recentLibraryItemsGridView.value =
-        !homeController.recentLibraryItemsGridView.value;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Obx(() => LibraryView(
         // ignore: invalid_use_of_protected_member
         items: homeController.recentLibraryItems.value,
-        condition: homeController.recentLibraryItemsGridView.value,
-        onGridButtonPressed: _onGridButtonPressed,
+        // condition: homeController.recentLibraryItemsGridView.value,
+        isGridView: homeController.recentLibraryItemsGridView,
+        // onGridButtonPressed: _onGridButtonPressed,
         title: "Recently Added"));
   }
 }

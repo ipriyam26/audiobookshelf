@@ -1,27 +1,10 @@
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/Model/author_response/author_response.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
+import 'package:audiobookshelf/Utils/extension.dart';
 import 'package:audiobookshelf/Utils/filter.dart';
 import 'package:get/get.dart';
 
-extension AuthorSorting on List<Author> {
-  // define sorting for author
-
-  sortBy(SortAuthorItem criteria) {
-    sort((b, a) {
-      switch (criteria) {
-        case SortAuthorItem.name:
-          return a.name.compareTo(b.name);
-        case SortAuthorItem.addedAt:
-          return a.addedAt.compareTo(b.addedAt);
-        case SortAuthorItem.numOfBooks:
-          return (a.numBooks ?? 0).compareTo(b.numBooks ?? 0);
-        default:
-          return a.addedAt.compareTo(b.addedAt);
-      }
-    });
-  }
-}
 
 class AuthorTabController extends GetxController {
   RxList<Author> authors = <Author>[].obs;
@@ -49,11 +32,16 @@ class AuthorTabController extends GetxController {
     ever(desc, (_) {
       authors.value = authors.reversed.toList();
     });
+
+    ever(homeController.dropdownValue, (callback) async {
+      authors.value = [];
+      authors.value = await getLibraryAuthor();
+    });
   }
 
   Future<List<Author>> getLibraryAuthor() async {
     final response = await apiService.authenticatedGet(
-        '/api/libraries/${homeController.dropdownValue.value.id}/authors');
+        'api/libraries/${homeController.dropdownValue.value.id}/authors');
 
     List<Author> recentAuthors = [];
 

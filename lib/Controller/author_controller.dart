@@ -3,6 +3,7 @@ import 'package:audiobookshelf/Model/author_response/author_response.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Model/recent_series_response/series.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class AuthorController extends GetxController {
@@ -25,9 +26,9 @@ class AuthorController extends GetxController {
   Future<void> onReady() async {
     super.onReady();
     item.value = await getAuthor();
-    print("got updated author");
+
     series.value = await getSeries() ?? [];
-    print("Done Recieveing series");
+
   }
 
   Future<Author> getAuthor() async {
@@ -36,14 +37,16 @@ class AuthorController extends GetxController {
     };
     try {
       final response = await apiService.authenticatedGet(
-          '/api/authors/${item.value.id}',
+          'api/authors/${item.value.id}',
           queryParameters: query);
       final author = Author.fromMap(response);
       return author;
     } catch (e) {
-      print("Error fetching author know as ${item.value.name}");
-      print("Request was /api/authors/${item.value.id}");
-      print(e);
+      if (kDebugMode) {
+        print("Error fetching author know as ${item.value.name}");
+        print("Request was api/authors/${item.value.id}");
+        print(e);
+      }
       return Author.empty();
     }
   }
@@ -55,7 +58,7 @@ class AuthorController extends GetxController {
     for (Series seriesItem in item.value.series) {
       try {
         var response = await apiService.authenticatedGet(
-            '/api/series/${seriesItem.id}',
+            'api/series/${seriesItem.id}',
             queryParameters: query);
         final List<dynamic> tempSeriesIds =
             response['progress']['libraryItemIds'];
@@ -68,8 +71,10 @@ class AuthorController extends GetxController {
         Series newSeries = seriesItem.copyWith(books: libraryItems);
         series.add(newSeries);
       } catch (e) {
-        print("Error fetching series know as ${seriesItem.name}");
-        print(e);
+        if (kDebugMode) {
+          print("Error fetching series know as ${seriesItem.name}");
+          print(e);
+        }
         continue;
       }
     }

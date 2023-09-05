@@ -185,12 +185,12 @@ class LibraryItem {
 
   String get authorName =>
       media.metadata.authors != null && media.metadata.authors!.isNotEmpty
-          ? media.metadata.authors![0].name ?? ""
+          ? media.metadata.authors!.map((e) => e.name).join(", ")
           : media.metadata.authorName ?? "";
 
   String get narratorNames =>
       media.metadata.narrators != null && media.metadata.narrators!.isNotEmpty
-          ? media.metadata.narrators![0]
+          ? media.metadata.narrators!.join(", ")
           : media.metadata.narratorName ?? "";
 
   String get description => media.metadata.description ?? "";

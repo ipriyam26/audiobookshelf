@@ -3,6 +3,7 @@ import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_items_result.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
+import 'package:audiobookshelf/Utils/extension.dart';
 import 'package:audiobookshelf/Utils/filter.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -26,6 +27,11 @@ class BookTabController extends GetxController {
     super.onReady();
     pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
+    });
+    ever(homeController.dropdownValue, (_) {
+      // Reset and refresh when dropdownValue changes
+      currentPage = 0;
+      pagingController.refresh();
     });
     // fetchMoreItems();
   }
@@ -55,12 +61,11 @@ class BookTabController extends GetxController {
 
     try {
       final newItems = await apiService.authenticatedGet(
-          "/api/libraries/${homeController.dropdownValue.value.id}/items",
+          "api/libraries/${homeController.dropdownValue.value.id}/items",
           queryParameters: queryParams);
       final libraryResponse = LibraryItemsResult.fromMap(newItems);
       final libraryItems = libraryResponse.results;
       final isLastPage = libraryItems!.length < _pageSize;
-      print(libraryItems);
       if (isLastPage) {
         pagingController.appendLastPage(libraryItems);
       } else {

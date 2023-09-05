@@ -1,5 +1,6 @@
 import 'package:audiobookshelf/Controller/grouped_controller.dart';
 import 'package:audiobookshelf/Model/recent_series_response/recent_series_response.dart';
+import 'package:audiobookshelf/Utils/extension.dart';
 import 'package:audiobookshelf/Utils/filter.dart';
 import 'package:get/get.dart';
 

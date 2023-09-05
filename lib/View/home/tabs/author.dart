@@ -1,5 +1,6 @@
 import 'package:audiobookshelf/Controller/authortab_controller.dart';
 import 'package:audiobookshelf/Utils/animation.dart';
+import 'package:audiobookshelf/Utils/extension.dart';
 import 'package:audiobookshelf/Utils/filter.dart';
 import 'package:audiobookshelf/View/home/widget/recent_authors.dart';
 import 'package:flutter/material.dart';

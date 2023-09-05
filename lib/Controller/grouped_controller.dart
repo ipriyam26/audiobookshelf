@@ -25,6 +25,11 @@ abstract class GroupedTabController extends GetxController {
     pagingController.addPageRequestListener((pageKey) {
       fetchPage(pageKey);
     });
+    ever(homeController.dropdownValue, (_) {
+      // Reset and refresh when dropdownValue changes
+      currentPage = 0;
+      pagingController.refresh();
+    });
   }
 
   Future<void> fetchPage(int pageKey);

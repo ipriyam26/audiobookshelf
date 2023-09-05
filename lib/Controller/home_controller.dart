@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/author_response/author_response.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
@@ -21,16 +23,25 @@ class HomeController extends GetxController {
   RxBool recentLibraryItemsGridView = false.obs;
   RxBool recentSeriesGridView = false.obs;
   RxBool recentAuthorsGridView = false.obs;
-
+  RxBool isSearching = false.obs;
+  Timer? debounce;
+  RxBool isLoading = false.obs;
   @override
   onReady() async {
     super.onReady();
     mediaProgressionItems.value = await getSortedMediaProgressItem() ?? [];
+
+    await getData();
+    ever(dropdownValue, (callback) async => await getData());
+    update();
+  }
+
+  Future<void> getData() async {
+    isLoading.value = true;
     recentLibraryItems.value = await getRecentlyAddedLibraryItems() ?? [];
     recentSeries.value = await getRecentlyAddedSeries() ?? [];
     recentAuthors.value = await getRecentAuthors() ?? [];
-    print("All initialized");
-    update();
+    isLoading.value = false;
   }
 
   HomeController() {
@@ -61,11 +72,9 @@ class HomeController extends GetxController {
       'include': 'items,series',
     };
     for (var author in authors) {
-      var response = await apiService.authenticatedGet("/api/authors/$author",
+      var response = await apiService.authenticatedGet("api/authors/$author",
           queryParameters: param);
       final tAuthor = Author.fromMap(response);
-      print("request made: /api/authors/$author");
-      print("Recieved author ${tAuthor.name}");
       fAuthor.add(tAuthor);
     }
     // print(fAuthor);
@@ -89,7 +98,7 @@ class HomeController extends GetxController {
     };
 
     var response = await apiService.authenticatedGet(
-        '/api/libraries/${dropdownValue.value.id}/series',
+        'api/libraries/${dropdownValue.value.id}/series',
         queryParameters: query);
 
     final seriesResponse = RecentSeriesResponse.fromMap(response);
@@ -105,7 +114,7 @@ class HomeController extends GetxController {
       'desc': 1,
     };
     final response = await apiService.authenticatedGet(
-        '/api/libraries/$libraryId/items',
+        'api/libraries/$libraryId/items',
         queryParameters: query);
     final libraryItems = LibraryItemsResult.fromMap(response);
 

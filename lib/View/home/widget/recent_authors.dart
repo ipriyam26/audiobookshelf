@@ -1,10 +1,8 @@
-import 'package:audiobookshelf/Controller/author_controller.dart';
 import 'package:audiobookshelf/Controller/home_controller.dart';
 import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/author_response/author_response.dart';
-import 'package:audiobookshelf/Utils/animation.dart';
-import 'package:audiobookshelf/Utils/loading.dart';
 import 'package:audiobookshelf/View/author.dart';
+import 'package:audiobookshelf/View/home/widget/library_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,57 +14,22 @@ class RecentAuthors extends StatelessWidget {
     super.key,
   });
 
-  final HomeController homeController = Get.find<HomeController>();
+  final HomeController homeController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      SizedBox(
-        height: 20.h,
-      ),
-      Column(
-        children: [
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Recently Added", style: Get.theme.textTheme.titleLarge),
-
-                //add transition when controller.bookGridView.value is changed
-
-                Obx(() => IconButton(
-                    onPressed: () {
-                      homeController.recentAuthorsGridView.value =
-                          !homeController.recentAuthorsGridView.value;
-                    },
-                    icon: IconAnimation(
-                        condition: homeController.recentAuthorsGridView.value)))
-              ],
-            ),
-          ),
-          Obx(() => ListToGridAnimation(
-              child: homeController.recentAuthors.isEmpty
-                  ? LoadingShimmer(height: 140.h, width: 130.w)
-                  : homeController.recentAuthorsGridView.value
-                      ? AuthorItemCarousel(
-                          key: UniqueKey(),
-                          items: homeController.recentAuthors,
-                          gridView: true,
-                        )
-                      : AuthorItemCarousel(
-                          key: UniqueKey(),
-                          items: homeController.recentAuthors,
-                          gridView: false,
-                        )))
-        ],
-      )
-    ]);
+    return homeController.recentAuthors.isEmpty
+        ? Container()
+        : Obx(() => LibraryView(
+              items: homeController.recentAuthors.value,
+              title: "Recent Authors",
+              isGridView: homeController.recentAuthorsGridView,
+            ));
   }
 }
 
 class AuthorItemCarousel extends StatelessWidget {
-  AuthorItemCarousel({
+  const AuthorItemCarousel({
     super.key,
     required this.items,
     // this.showProgress = false,
@@ -75,9 +38,7 @@ class AuthorItemCarousel extends StatelessWidget {
 
   final List<Author> items;
   final bool gridView;
-  // final bool showProgress;
-  final homeController = Get.find<HomeController>();
-  final userController = Get.find<UserController>();
+
   @override
   Widget build(BuildContext context) {
 // Inside your build method:
@@ -93,7 +54,6 @@ class AuthorItemCarousel extends StatelessWidget {
                     ))
                 .toList())
         : Container(
-            // width: Get.context!.width,
             color: Get.theme.colorScheme.background,
             height: 140.h,
             child: ListView.builder(

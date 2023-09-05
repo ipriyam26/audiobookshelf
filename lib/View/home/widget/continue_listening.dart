@@ -11,20 +11,19 @@ class ContinueListening extends StatelessWidget {
 
   final HomeController homeController = Get.find<HomeController>();
   final UserController userController = Get.find<UserController>();
-  void _onGridButtonPressed() {
-    homeController.continueListeningGridView.value =
-        !homeController.continueListeningGridView.value;
-  }
+
 
   @override
   Widget build(BuildContext context) {
     return userController.currentUser.value.mediaProgress!.isNotEmpty
         ? Obx(() => LibraryView(
               title: "Continue Listening",
+
               // ignore: invalid_use_of_protected_member
               items: homeController.mediaProgressionItems.value,
-              condition: homeController.continueListeningGridView.value,
-              onGridButtonPressed: _onGridButtonPressed,
+              // condition: homeController.continueListeningGridView.value,
+              // onGridButtonPressed: _onGridButtonPressed,
+              isGridView: homeController.continueListeningGridView,
             ))
         : Container();
   }

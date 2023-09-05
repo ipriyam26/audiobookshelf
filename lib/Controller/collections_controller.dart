@@ -2,7 +2,6 @@ import 'package:audiobookshelf/Controller/grouped_controller.dart';
 import 'package:audiobookshelf/Model/collection_response/collection_response.dart';
 
 class CollectionTabController extends GroupedTabController {
-
   @override
   Future<void> fetchPage(int pageKey) async {
     final queryParams = {
@@ -13,7 +12,7 @@ class CollectionTabController extends GroupedTabController {
 
     try {
       var response = await apiService.authenticatedGet(
-          '/api/libraries/${homeController.dropdownValue.value.id}/collections',
+          'api/libraries/${homeController.dropdownValue.value.id}/collections',
           queryParameters: queryParams);
       final collectionItems = CollectionResponse.fromMap(response).results;
       final isLastPage = collectionItems.length < pageSize;

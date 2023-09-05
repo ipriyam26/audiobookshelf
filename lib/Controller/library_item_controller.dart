@@ -16,7 +16,7 @@ class LibraryItemController extends GetxController {
     print("Making request: ${item.value.id}");
     final params = {"expanded": "true", "include": "progress"};
     final response = await apiService.authenticatedGet(
-        "/api/items/${item.value.id}",
+        "api/items/${item.value.id}",
         queryParameters: params);
     item.value = LibraryItem.fromMap(response);
     print("Making Another request: ${item.value.title}");

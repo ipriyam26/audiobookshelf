@@ -10,7 +10,25 @@ class ApiService {
   late ThemeData theme;
   final Dio dio = Dio();
   String? authToken; // Optional token for authenticated requests
-  ApiService._internal();
+  ApiService._internal() {
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          print('Request: ${options.uri}');
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          // print('Response: ${response.statusCode} ${response.data}');
+          return handler.next(response);
+        },
+        onError: (DioError e, handler) {
+          print('Error: ${e.response?.statusCode} ${e.message}');
+          print('Failed URL: ${e.requestOptions.uri}');
+          return handler.next(e);
+        },
+      ),
+    );
+  }
 
   static ApiService initialize(
       {required String serverUrl, required ThemeData theme}) {
