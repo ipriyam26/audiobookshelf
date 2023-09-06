@@ -8,6 +8,7 @@ import 'package:audiobookshelf/Model/library_response/library.dart';
 import 'package:audiobookshelf/Model/recent_series_response/recent_series_response.dart';
 import 'package:audiobookshelf/Model/recent_series_response/series.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
@@ -30,7 +31,11 @@ class HomeController extends GetxController {
   onReady() async {
     super.onReady();
     mediaProgressionItems.value = await getSortedMediaProgressItem() ?? [];
+    if (kDebugMode) {
+      print("Authenticating: ${userController.currentUser.value.token}");
 
+      print("Library Item ${mediaProgressionItems.first.id}");
+    }
     await getData();
     ever(dropdownValue, (callback) async => await getData());
     update();

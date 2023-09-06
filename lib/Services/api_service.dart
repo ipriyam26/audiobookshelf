@@ -1,5 +1,6 @@
 import 'package:audiobookshelf/Utils/snakbar.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ApiService {
@@ -14,16 +15,20 @@ class ApiService {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          print('Request: ${options.uri}');
+          if (kDebugMode) {
+            print('Request: ${options.uri}');
+          }
           return handler.next(options);
         },
         onResponse: (response, handler) {
           // print('Response: ${response.statusCode} ${response.data}');
           return handler.next(response);
         },
-        onError: (DioError e, handler) {
-          print('Error: ${e.response?.statusCode} ${e.message}');
-          print('Failed URL: ${e.requestOptions.uri}');
+        onError: (DioException e, handler) {
+          if (kDebugMode) {
+            print('Error: ${e.response?.statusCode} ${e.message}');
+            print('Failed URL: ${e.requestOptions.uri}');
+          }
           return handler.next(e);
         },
       ),
@@ -43,13 +48,6 @@ class ApiService {
   void setAuthToken(String token) {
     authToken = token;
   }
-
-  // Future<ThemeData> getTheme() async {
-  //   final themeStr = await rootBundle.loadString('assets/appainter_theme.json');
-  //   final themeJson = await jsonDecode(themeStr);
-  //   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
-  //   return theme;
-  // }
 
   factory ApiService() {
     if (!_isInitialized) {

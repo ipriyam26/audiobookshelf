@@ -1,4 +1,3 @@
-
 enum SortLibraryItem {
   title,
   publishYear,
@@ -18,4 +17,3 @@ enum SortAuthorItem {
   addedAt,
   numOfBooks,
 }
-

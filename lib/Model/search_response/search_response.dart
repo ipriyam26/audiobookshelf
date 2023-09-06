@@ -21,14 +21,15 @@ class SearchResponse {
   String toString() {
     return 'SearchResponse(book: $book,\n tags: $tags,\n authors: $authors,\n series: $series)';
   }
-factory SearchResponse.empty(){
-  return SearchResponse(
-    book: [],
-    tags: [],
-    authors: [],
-    series: [],
-  );
-}
+
+  factory SearchResponse.empty() {
+    return SearchResponse(
+      book: [],
+      tags: [],
+      authors: [],
+      series: [],
+    );
+  }
   factory SearchResponse.fromMap(Map<String, dynamic> data) {
     return SearchResponse(
       book: ((data['book'] as List<dynamic>?) ?? [])

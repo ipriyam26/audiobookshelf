@@ -75,7 +75,7 @@ class LibraryItemView extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            const ActionButtons(),
+            ActionButtons(),
             ProgressCard(),
             BookMetadata(),
             Description(),
@@ -157,10 +157,10 @@ class AudioFiles extends StatelessWidget {
 }
 
 class ActionButtons extends StatelessWidget {
-  const ActionButtons({
+  ActionButtons({
     super.key,
   });
-
+  final LibraryItemController controller = Get.find();
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -170,7 +170,9 @@ class ActionButtons extends StatelessWidget {
           height: 36.h,
           width: 240.w,
           child: ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                controller.startPlaybackSession();
+              },
               icon: Icon(
                 Icons.play_arrow,
                 size: 32.w,

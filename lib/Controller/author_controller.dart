@@ -28,7 +28,6 @@ class AuthorController extends GetxController {
     item.value = await getAuthor();
 
     series.value = await getSeries() ?? [];
-
   }
 
   Future<Author> getAuthor() async {

@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LibraryItemController extends GetxController {
   Rx<LibraryItem> item = LibraryItem.empty().obs;
+  final UserController userController = Get.find<UserController>();
 
   LibraryItemController(LibraryItem libraryItem) {
     item.value = libraryItem;
@@ -13,17 +19,41 @@ class LibraryItemController extends GetxController {
   @override
   Future<void> onReady() async {
     super.onReady();
-    print("Making request: ${item.value.id}");
+    item.value = await getLibraryItem();
+
+    update();
+  }
+
+  Future<LibraryItem> getLibraryItem() async {
     final params = {"expanded": "true", "include": "progress"};
     final response = await apiService.authenticatedGet(
         "api/items/${item.value.id}",
         queryParameters: params);
-    item.value = LibraryItem.fromMap(response);
-    print("Making Another request: ${item.value.title}");
-    update();
+    return LibraryItem.fromMap(response);
   }
 
-  final UserController userController = Get.find<UserController>();
+  startPlaybackSession() async {
+    final response = await apiService.authenticatedPost(
+      "api/items/${item.value.id}/play",
+      {
+        "deviceInfo": {"clientVersion": "0.0.1"},
+        "supportedMimeTypes": ["audio/flac", "audio/mpeg", "audio/mp4"]
+      },
+    );
+    //save response as a file
+    // File file = File("${item.value.id}.json");
+    Directory tempDir = await getTemporaryDirectory();
+    //delete files if exists
+
+    File file = File('${tempDir.path}/${item.value.id}.json');
+    String jsonString = jsonEncode(response);
+    print(item.value.id);
+    file.writeAsString(jsonString);
+    if (kDebugMode) {
+      print(file.path);
+      print(response);
+    }
+  }
 
   String getAudioFileNames(int index) {
     return item.value.audioFiles[index].metadata!.filename ?? "Failed to Load";

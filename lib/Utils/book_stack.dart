@@ -15,8 +15,9 @@ class BookStack extends StatelessWidget {
     double width = 320.w * scaleFactor;
     double height = 140.h * scaleFactor;
     double individualWidth = 170.w * scaleFactor;
-    double overlap =
-        clappedBooks.length > 1 ? (width - height) / (clappedBooks.length - 1) : 0;
+    double overlap = clappedBooks.length > 1
+        ? (width - height) / (clappedBooks.length - 1)
+        : 0;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(4.w),

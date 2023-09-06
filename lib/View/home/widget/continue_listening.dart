@@ -12,7 +12,6 @@ class ContinueListening extends StatelessWidget {
   final HomeController homeController = Get.find<HomeController>();
   final UserController userController = Get.find<UserController>();
 
-
   @override
   Widget build(BuildContext context) {
     return userController.currentUser.value.mediaProgress!.isNotEmpty

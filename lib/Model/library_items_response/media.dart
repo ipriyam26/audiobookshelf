@@ -11,7 +11,7 @@ class Media {
   String? libraryItemId;
   Metadata metadata;
   String? coverPath;
-  List<dynamic>? tags;
+  List<String>? tags;
   List<AudioFile>? audioFiles;
   List<Chapter>? chapters;
   double? duration;
@@ -57,7 +57,7 @@ class Media {
         libraryItemId: data['libraryItemId'] as String?,
         metadata: Metadata.fromMap(data['metadata'] as Map<String, dynamic>),
         coverPath: data['coverPath'] as String?,
-        tags: data['tags'] as List<dynamic>?,
+        tags: ((data['tags'] as List<dynamic>?) ?? []).map((e) => e as String).toList(),
         audioFiles: (data['audioFiles'] as List<dynamic>?)
             ?.map((e) => AudioFile.fromMap(e as Map<String, dynamic>))
             .toList(),

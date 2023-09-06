@@ -5,7 +5,6 @@ import 'package:audiobookshelf/Utils/extension.dart';
 import 'package:audiobookshelf/Utils/filter.dart';
 import 'package:get/get.dart';
 
-
 class AuthorTabController extends GetxController {
   RxList<Author> authors = <Author>[].obs;
   RxBool isGridView = false.obs;
