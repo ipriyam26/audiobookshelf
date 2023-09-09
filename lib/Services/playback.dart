@@ -1,6 +1,7 @@
 import 'package:audiobookshelf/Model/library_items_response/chapter.dart';
 import 'package:audiobookshelf/Model/playback_session/audio_track.dart';
 import 'package:audiobookshelf/Model/playback_session/playback_session.dart';
+import 'package:flutter/foundation.dart';
 
 class PlaybackSessionManager {
   PlaybackSession session;
@@ -10,7 +11,9 @@ class PlaybackSessionManager {
   PlaybackSessionManager(this.session) {
     currentTime = session.currentTime;
     chapters = chaptersWithEnoughDuration();
-    print(chapters);
+    if (kDebugMode) {
+      print(chapters);
+    }
   }
 
   set setCurrentTime(double time) {

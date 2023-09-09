@@ -45,6 +45,7 @@ class PlayerController extends GetxController {
   onInit() async {
     super.onInit();
     PlaybackSession playbackSession = await startPlaybackSession();
+    await Future.delayed(const Duration(seconds: 15));
     playbackSessionManager.value = PlaybackSessionManager(playbackSession);
     item.value = playbackSession.libraryItem;
     playerState.value = player.state;

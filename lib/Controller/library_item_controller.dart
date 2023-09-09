@@ -20,7 +20,7 @@ class LibraryItemController extends GetxController {
   }
 
   Future<LibraryItem> getLibraryItem() async {
-    final params = {"expanded": "true", "include": "progress"};
+    final params = {"expanded": 1, "include": "progress"};
     final response = await apiService.authenticatedGet(
         "api/items/${item.value.id}",
         queryParameters: params);

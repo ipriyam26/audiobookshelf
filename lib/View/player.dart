@@ -1,6 +1,7 @@
 import 'package:audiobookshelf/Controller/player_controller.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Model/playback_session/playback_session.dart';
+import 'package:audiobookshelf/Utils/loading.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -110,22 +111,25 @@ class Player extends StatelessWidget {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 12.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Obx(() => Text(
+                    child: Obx(() => Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ShimmerText(
                               playerController.currentChapterTitle,
+                              placeHolder: "Chapter 32",
                               style: Get.textTheme.headlineMedium,
                               overflow: TextOverflow.ellipsis,
-                            )),
-                        Text(
-                          playerController.playbackSessionManager.value.session
-                              .libraryItem.authorName,
-                          style: Get.textTheme.headlineSmall,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
+                            ),
+                            ShimmerText(
+                              playerController.playbackSessionManager.value
+                                  .session.libraryItem.authorName,
+                              placeHolder: "Matt Dinimain,Jeff Heys",
+                              style: Get.textTheme.headlineSmall,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        )),
                   ),
                   Expanded(
                     child: Column(
