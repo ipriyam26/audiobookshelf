@@ -5,21 +5,21 @@ import 'package:collection/collection.dart';
 import 'file_metadata.dart';
 
 class AudioTrack {
-  int? index;
-  double? startOffset;
-  double? duration;
-  String? title;
-  String? contentUrl;
+  int index;
+  double startOffset;
+  double duration;
+  String title;
+  String contentUrl;
   String? mimeType;
   String? codec;
   Metadata? metadata;
 
   AudioTrack({
-    this.index,
-    this.startOffset,
-    this.duration,
-    this.title,
-    this.contentUrl,
+    required this.index,
+    required this.startOffset,
+    required this.duration,
+    required this.title,
+    required this.contentUrl,
     this.mimeType,
     this.codec,
     this.metadata,
@@ -31,16 +31,24 @@ class AudioTrack {
   }
 
   factory AudioTrack.fromMap(Map<String, dynamic> data) => AudioTrack(
-        index: data['index'] as int?,
-        startOffset: (data['startOffset'] as num?)?.toDouble(),
-        duration: (data['duration'] as num?)?.toDouble(),
-        title: data['title'] as String?,
-        contentUrl: data['contentUrl'] as String?,
+        index: data['index'] as int,
+        startOffset: (data['startOffset'] as num).toDouble(),
+        duration: (data['duration'] as num).toDouble(),
+        title: data['title'] as String,
+        contentUrl: data['contentUrl'] as String,
         mimeType: data['mimeType'] as String?,
         codec: data['codec'] as String?,
         metadata: data['metadata'] == null
             ? null
             : Metadata.fromMap(data['metadata'] as Map<String, dynamic>),
+      );
+
+  factory AudioTrack.empty() => AudioTrack(
+        index: 0,
+        startOffset: 0,
+        duration: 0,
+        title: '',
+        contentUrl: '',
       );
 
   Map<String, dynamic> toMap() => {

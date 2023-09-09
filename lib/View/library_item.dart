@@ -5,6 +5,7 @@ import 'package:audiobookshelf/Controller/library_item_controller.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Utils/button.dart';
 import 'package:audiobookshelf/View/home/widget/drop_down_list.dart';
+import 'package:audiobookshelf/View/player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -170,8 +171,14 @@ class ActionButtons extends StatelessWidget {
           height: 36.h,
           width: 240.w,
           child: ElevatedButton.icon(
-              onPressed: () {
-                controller.startPlaybackSession();
+              onPressed: () async {
+                // final playbackSession = await controller.startPlaybackSession();
+                // Get.put(PlayerController(playbackSession));
+                Get.to(
+                  () => Player(
+                    item: controller.item.value,
+                  ),
+                );
               },
               icon: Icon(
                 Icons.play_arrow,
@@ -366,7 +373,7 @@ class ChapterList extends StatelessWidget {
                       ),
                       subtitle: Text(
                         controller.getChapterDuration(
-                            controller.item.value.chapterList[index].start!),
+                            controller.item.value.chapterList[index].start),
                         style: Get.theme.textTheme.headlineSmall!.copyWith(
                           fontSize: 14.sp,
                           color: Get.theme.colorScheme.outline,

@@ -53,6 +53,8 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   flutter_platform_widgets: ^3.3.5
   path_provider: ^2.1.1
+  audioplayers: ^5.1.0
+  palette_generator: ^0.3.3+3
 
 dev_dependencies:
   flutter_test:

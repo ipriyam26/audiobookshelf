@@ -1,12 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:audiobookshelf/Controller/user_controller.dart';
 import 'package:audiobookshelf/Model/library_items_response/library_item.dart';
 import 'package:audiobookshelf/Services/api_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 
 class LibraryItemController extends GetxController {
   Rx<LibraryItem> item = LibraryItem.empty().obs;
@@ -32,35 +27,12 @@ class LibraryItemController extends GetxController {
     return LibraryItem.fromMap(response);
   }
 
-  startPlaybackSession() async {
-    final response = await apiService.authenticatedPost(
-      "api/items/${item.value.id}/play",
-      {
-        "deviceInfo": {"clientVersion": "0.0.1"},
-        "supportedMimeTypes": ["audio/flac", "audio/mpeg", "audio/mp4"]
-      },
-    );
-    //save response as a file
-    // File file = File("${item.value.id}.json");
-    Directory tempDir = await getTemporaryDirectory();
-    //delete files if exists
-
-    File file = File('${tempDir.path}/${item.value.id}.json');
-    String jsonString = jsonEncode(response);
-    print(item.value.id);
-    file.writeAsString(jsonString);
-    if (kDebugMode) {
-      print(file.path);
-      print(response);
-    }
-  }
-
   String getAudioFileNames(int index) {
     return item.value.audioFiles[index].metadata!.filename ?? "Failed to Load";
   }
 
   String getChapterNames(int index) {
-    return item.value.chapterList[index].title ?? "Failed to Load";
+    return item.value.chapterList[index].title;
   }
 
   String getCoverUrl() {

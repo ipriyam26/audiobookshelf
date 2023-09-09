@@ -20,6 +20,14 @@ class DeviceInfo {
     return 'DeviceInfo(deviceId: $deviceId, ipAddress: $ipAddress, clientVersion: $clientVersion, serverVersion: $serverVersion)';
   }
 
+  factory DeviceInfo.empty() {
+    return DeviceInfo(
+      deviceId: '',
+      ipAddress: '',
+      clientVersion: '',
+      serverVersion: '',
+    );
+  }
   factory DeviceInfo.fromMap(Map<String, dynamic> data) => DeviceInfo(
         deviceId: data['deviceId'] as String?,
         ipAddress: data['ipAddress'] as String?,
